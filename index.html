@@ -75,14 +75,14 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 10vh;            /* Чуть приподнял отступ, чтобы мега-колода поместилась вместе с кнопкой */
+  padding-top: 12vh;            /* Удерживаем расположение на уровне глаз */
 }
 
-/* Колода карт — ИСПРАВЛЕНО: убрали жесткие лимиты, вывели на 92% ширины экрана */
+/* Колода карт — ИСПРАВЛЕНО: железно увеличиваем сам контейнер */
 .deck {
   position: relative;
-  width: 92vw;                  /* Карты займут максимум доступного места в ширину */
-  height: 133vw;                /* Пропорционально увеличили высоту под размер картинки */
+  width: 82vw;                  /* Широкий, заметный на экране контейнер */
+  height: 115vw;                /* Выверенная высота контейнера */
   overflow: visible;
 }
 
@@ -90,9 +90,9 @@ html, body {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 24px;          /* Чуть увеличили скругление под большой размер */
+  border-radius: 16px;
   background-image: url('card_back.png');
-  background-size: contain;
+  background-size: 100% 100%;   /* ИСПРАВЛЕНО: картинка теперь обязана занять 100% увеличенного контейнера */
   background-position: center;
   background-repeat: no-repeat;
   box-shadow: 0 12px 40px rgba(0,0,0,0.6);
@@ -108,7 +108,7 @@ html, body {
   width: 60vw;
   max-width: 280px;
   min-width: 200px;
-  margin-top: 35px;             /* Сбалансированный отступ под новую колоду */
+  margin-top: 45px;             /* Аккуратный зазор под увеличенной колодой */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
