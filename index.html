@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -19,7 +20,7 @@ html, body {
   background-color: #000;
 }
 
-/* Карусель — явно разрешаем горизонтальные жесты */
+/* Карусель */
 .carousel {
   display: flex;
   width: 300%;
@@ -65,7 +66,7 @@ html, body {
   white-space: nowrap;
 }
 
-/* Контент игрового экрана */
+/* Контент игрового экрана — ИСПРАВЛЕНО: сдвинули контент чуть вниз (на уровень глаз) */
 .game-content {
   position: absolute;
   top: 0; left: 0;
@@ -74,16 +75,17 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Выравнивание сверху, чтобы точно управлять отступом */
+  padding-top: 12vh;            /* Мягкий сдвиг всей группы элементов вниз */
 }
 
-/* Колода карт — крупная и центрированная */
+/* Колода карт — ИСПРАВЛЕНО: еще крупнее */
 .deck {
   position: relative;
-  width: 78vw;
-  height: 109.2vw;
-  max-width: 380px;
-  max-height: 532px;
+  width: 85vw;                  /* Максимальное увеличение ширины */
+  height: 119vw;                /* Пропорция 1:1.4 для сохранения геометрии карт */
+  max-width: 420px;             /* Лимит для больших экранов */
+  max-height: 588px;
   overflow: visible;
 }
 
@@ -96,7 +98,7 @@ html, body {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.55);
 }
 
 /* Стопка — каждая карта чуть смещена */
@@ -104,12 +106,12 @@ html, body {
 .deck-card:nth-child(2) { transform: translate(-5px, -5px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
-/* Кнопка — размер прежний, безопасный отступ сверху */
+/* Кнопка */
 .btn-start {
   width: 60vw;
   max-width: 280px;
   min-width: 200px;
-  margin-top: 40px;
+  margin-top: 45px;             /* Комфортный зазор между огромной колодой и кнопкой */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
