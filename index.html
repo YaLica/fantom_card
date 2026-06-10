@@ -64,19 +64,96 @@ html, body {
   white-space: nowrap;
 }
 
+/* Контент игрового экрана */
+.game-content {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+/* Колода карт — в 1.7 раза меньше фона по ширине */
+.deck {
+  position: relative;
+  width: 58.8vw;   /* 100vw ÷ 1.7 */
+  height: 82.4vw;  /* сохраняем пропорцию карты ~1:1.4 */
+  max-width: 320px;
+  max-height: 448px;
+}
+
+.deck-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background-image: url('card_back.png');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+/* Стопка — каждая карта чуть смещена */
+.deck-card:nth-child(1) { transform: translate(-8px, -8px) rotate(-3deg); }
+.deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
+.deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
+
+/* Кнопка — крупная, читаемая на телефоне */
+.btn-start {
+  width: 60vw;
+  max-width: 280px;
+  min-width: 200px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease;
+  touch-action: manipulation;
+}
+
+.btn-start:active {
+  transform: scale(0.93);
+}
+
 </style>
 </head>
 <body>
 
 <div class="carousel" id="carousel">
+
+  <!-- Экран 1 — Обложка -->
   <div class="screen" id="screen-cover">
     <div class="swipe-hint">листай влево ←</div>
   </div>
+
+  <!-- Экран 2 — Правила -->
   <div class="screen" id="screen-rules">
     <div class="swipe-hint">листай влево ←</div>
   </div>
-  <div class="screen" id="screen-game"></div>
+
+  <!-- Экран 3 — Игра -->
+  <div class="screen" id="screen-game">
+    <div class="game-content">
+
+      <!-- Колода -->
+      <div class="deck">
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+      </div>
+
+      <!-- Кнопка -->
+      <img class="btn-start" src="btn_start.png" id="btnStart" alt="Начинаем">
+
+    </div>
+  </div>
+
 </div>
+
+<!-- Звук -->
+<audio id="soundStart" src="start.mp3" preload="auto"></audio>
 
 <script>
 
@@ -84,7 +161,6 @@ const carousel = document.getElementById('carousel');
 
 let current = 0;
 const total = 3;
-
 let startX = 0;
 let startY = 0;
 let isDragging = false;
@@ -96,6 +172,7 @@ function goTo(index) {
   carousel.style.transform = `translateX(-${current * 33.333}%)`;
 }
 
+// Touch
 carousel.addEventListener('touchstart', (e) => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
@@ -105,19 +182,15 @@ carousel.addEventListener('touchstart', (e) => {
 carousel.addEventListener('touchend', (e) => {
   if (!isDragging) return;
   isDragging = false;
-
   const diffX = startX - e.changedTouches[0].clientX;
   const diffY = startY - e.changedTouches[0].clientY;
-
   if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-    if (diffX > 0) {
-      goTo(current + 1);
-    } else {
-      goTo(current - 1);
-    }
+    if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
   }
 }, { passive: true });
 
+// Mouse
 carousel.addEventListener('mousedown', (e) => {
   startX = e.clientX;
   startY = e.clientY;
@@ -127,17 +200,22 @@ carousel.addEventListener('mousedown', (e) => {
 carousel.addEventListener('mouseup', (e) => {
   if (!isDragging) return;
   isDragging = false;
-
   const diffX = startX - e.clientX;
   const diffY = startY - e.clientY;
-
   if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-    if (diffX > 0) {
-      goTo(current + 1);
-    } else {
-      goTo(current - 1);
-    }
+    if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
   }
+});
+
+// Кнопка Начинаем
+const btnStart = document.getElementById('btnStart');
+const soundStart = document.getElementById('soundStart');
+
+btnStart.addEventListener('click', () => {
+  soundStart.currentTime = 0;
+  soundStart.play();
+  // дальнейшее действие добавим позже
 });
 
 goTo(0);
