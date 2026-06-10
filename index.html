@@ -100,7 +100,6 @@ html, body {
 .btn-start:active {
   transform: scale(0.93);
 }
-
 .grid-container {
   display: none;
   width: 86vw;
@@ -134,7 +133,7 @@ html, body {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-/* Кнопка ПЕРЕМЕШАТЬ — Ювелирный отступ в 2 миллиметра */
+/* Кнопка ПЕРЕМЕШАТЬ — Безопасный отступ в пикселях */
 .btn-shuffle {
   display: none;
   width: 55vw;
@@ -144,108 +143,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 2mm; /* Ровно 2 мм сверху от зафиксированной сетки */
+  margin-top: 8px; /* Железобетонные 8 пикселей (~2мм) */
 }
 .btn-shuffle:active {
-  transform: scale(0.93);
-}
-</style>
-</head>
-<body>
-
-<div class="carousel" id="carousel">
-  <div class="screen" id="screen-cover">
-    <div class="swipe-hint">листай влево &larr;</div>
-  </div>
-  <div class="screen" id="screen-rules">
-    <div class="swipe-hint">листай влево &larr;</div>
-  </div>
-  <div class="screen" id="screen-game">
-    <div class="game-content" id="gameContent">
-      <div class="deck" id="mainDeck">
-        <div class="deck-card"></div>
-        <div class="deck-card"></div>
-        <div class="deck-card"></div>
-      </div>
-      <img class="btn-start" src="btn_start.png" id="btnStart" alt="Начинаем">
-      <div class="grid-container" id="gridContainer"></div>
-      <img class="btn-shuffle" src="btn_mix.png" id="btnShuffle" alt="Перемешать">
-    </div>
-  </div>
-</div>
-
-<audio id="soundStart" src="start.mp3" preload="auto"></audio>
-<audio id="soundShuffle" src="shuffle.mp3" preload="auto"></audio>
-
-<script>
-const carousel = document.getElementById('carousel');
-let current = 0;
-const total = 3;
-let startX = 0;
-let startY = 0;
-let isDragging = false;
-
-function goTo(index) {
-  if (index < 0) index = 0;
-  if (index >= total) index = total - 1;
-  current = index;
-  carousel.style.transform = "translateX(-" + (current * 33.333) + "%)";
-}
-
-carousel.addEventListener('touchstart', function(e) {
-  startX = e.touches[0].clientX;
-  startY = e.touches[0].clientY;
-  isDragging = true;
-}, { passive: true });
-
-carousel.addEventListener('touchmove', function(e) {
-  if (!isDragging) return;
-  if (e.cancelable) e.preventDefault();
-}, { passive: false });
-
-carousel.addEventListener('touchend', function(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  var diffX = startX - e.changedTouches[0].clientX;
-  var diffY = startY - e.changedTouches[0].clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-}, { passive: true });
-
-carousel.addEventListener('mousedown', function(e) {
-  startX = e.clientX;
-  startY = e.clientY;
-  isDragging = true;
-});
-
-carousel.addEventListener('mouseup', function(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  var diffX = startX - e.clientX;
-  var diffY = startY - e.clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-});
-
-window.addEventListener('keydown', function(e) {
-  if (e.key === 'ArrowRight') {
-    goTo(current + 1);
-  } else if (e.key === 'ArrowLeft') {
-    goTo(current - 1);
-  }
-});
-
-const btnStart = document.getElementById('btnStart');
-const mainDeck = document.getElementById('mainDeck');
-const gridContainer = document.getElementById('gridContainer');
-const btnShuffle = document.getElementById('btnShuffle');
-const soundStart = document.getElementById('soundStart');
-const soundShuffle = document.getElementById('soundShuffle');
-const gameContent = document.getElementById('gameContent');
-
-btnStart.addEventListener('click', function() {
-  soundStart.currentTime = 0;
+  transform: scale(
