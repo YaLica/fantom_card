@@ -17,6 +17,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   touch-action: none;
+  background-color: #000;
 }
 
 .carousel {
@@ -73,7 +74,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 10vh; /* Зафиксированная высота колоды */
+  padding-top: 10vh; /* Наша идеальная зафиксированная высота */
 }
 
 /* Колода карт — ЗАФИКСИРОВАНО НАМЕРТВО */
@@ -83,7 +84,7 @@ html, body {
   aspect-ratio: 9 / 16;
   overflow: visible;
   margin: 0 auto;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .deck-card {
@@ -111,7 +112,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: -10px;
+  margin-top: 24px;
 }
 
 .btn-start:active {
@@ -120,30 +121,210 @@ html, body {
 
 /* ИГРОВАЯ СЕТКА 5х5 (Изначально скрыта) */
 .grid-container {
-  display: none; /* Включается через JS */
-  width: 92vw;   /* Занимает почти всю ширину экрана */
-  max-width: 440px;
+  display: none; 
+  width: 92vw;   
+  max-width: 420px;
   grid-template-columns: repeat(5, 1fr);
-  gap: 6px;      /* Аккуратные зазоры между картами */
+  gap: 5px;      
   margin: 0 auto;
-  position: relative;
 }
 
-/* Маленькие карточки в сетке */
+/* Маленькие карточки в сетке с железной пропорцией 9:16 */
 .grid-card {
   width: 100%;
-  aspect-ratio: 9 / 16; /* Железное сохранение пропорции 9:16 */
-  border-radius: 6px;   /* Пропорционально уменьшенное скругление */
+  aspect-ratio: 9 / 16; 
+  border-radius: 6px;   
   background-image: url('card_back.png');
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   opacity: 0;
-  transform: scale(0);  /* Изначально сжаты в центре для эффекта разлета */
 }
 
-/* Анимация разлета карт из центра */
-@keyframes flyIn {
+/* Безопасная CSS анимация разлета прямо из центра экрана */
+@keyframes flyFromCenter {
   0% {
     opacity: 0;
+    transform: scale(0.1) translate(0, 20vh) rotate(30deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translate(0, 0) rotate(0deg);
+  }
+}
+
+.grid-card.animate {
+  animation: flyFromCenter 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Кнопка ПЕРЕМЕШАТЬ */
+.btn-shuffle {
+  display: none;
+  width: 60vw;
+  max-width: 280px;
+  min-width: 200px;
+  margin-top: 20px;
+  padding: 12px;
+  background: linear-gradient(180deg, #533315 0%, #2b1704 100%); 
+  color: #e9c491; 
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid #9c733e;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease;
+}
+
+.btn-shuffle:active {
+  transform: scale(0.95);
+}
+
+</style>
+</head>
+<body>
+
+<div class="carousel" id="carousel">
+
+  <div class="screen" id="screen-cover">
+    <div class="swipe-hint">листай влево ←</div>
+  </div>
+
+  <div class="screen" id="screen-rules">
+    <div class="swipe-hint">листай влево ←</div>
+  </div>
+
+  <div class="screen" id="screen-game">
+    <div class="game-content" id="gameContent">
+
+      <div class="deck" id="mainDeck">
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+      </div>
+
+      <img class="btn-start" src="btn_start.png" id="btnStart" alt="Начинаем">
+
+      <div class="grid-container" id="gridContainer"></div>
+
+      <div class="btn-shuffle" id="btnShuffle">Перемешать</div>
+
+    </div>
+  </div>
+
+</div>
+
+<audio id="soundStart" src="start.mp3" preload="auto"></audio>
+
+<script>
+
+const carousel = document.getElementById('carousel');
+
+let current = 0;
+const total = 3;
+let startX = 0;
+let startY = 0;
+let isDragging = false;
+
+function goTo(index) {
+  if (index < 0) index = 0;
+  if (index >= total) index = total - 1;
+  current = index;
+  carousel.style.transform = `translateX(-${current * 33.333}%)`;
+}
+
+// Touch
+carousel.addEventListener('touchstart', (e) => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+  isDragging = true;
+}, { passive: true });
+
+carousel.addEventListener('touchend', (e) => {
+  if (!isDragging) return;
+  isDragging = false;
+  const diffX = startX - e.changedTouches[0].clientX;
+  const diffY = startY - e.changedTouches[0].clientY;
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
+  }
+}, { passive: true });
+
+// Mouse
+carousel.addEventListener('mousedown', (e) => {
+  startX = e.clientX;
+  startY = e.clientY;
+  isDragging = true;
+});
+
+carousel.addEventListener('mouseup', (e) => {
+  if (!isDragging) return;
+  isDragging = false;
+  const diffX = startX - e.clientX;
+  const diffY = startY - e.clientY;
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
+  }
+});
+
+// КНОПКА «НАЧИНАЕМ» И ВЗРЫВ КОЛОДЫ
+const btnStart = document.getElementById('btnStart');
+const mainDeck = document.getElementById('mainDeck');
+const gridContainer = document.getElementById('gridContainer');
+const btnShuffle = document.getElementById('btnShuffle');
+const soundStart = document.getElementById('soundStart');
+const gameContent = document.getElementById('gameContent');
+
+btnStart.addEventListener('click', () => {
+  soundStart.currentTime = 0;
+  soundStart.play();
+
+  // Плавное исчезновение колоды и стартовой кнопки
+  mainDeck.style.opacity = '0';
+  mainDeck.style.transform = 'scale(0.8)';
+  btnStart.style.opacity = '0';
+  
+  setTimeout(() => {
+    mainDeck.style.display = 'none';
+    btnStart.style.display = 'none';
+
+    // Выравниваем контент под сетку
+    gameContent.style.paddingTop = '5vh';
+
+    // Включаем отображение сетки и кнопки Перемешать
+    gridContainer.style.display = 'grid';
+    btnShuffle.style.display = 'block';
+
+    // Генерируем карты
+    createGridCards();
+  }, 400);
+});
+
+function createGridCards() {
+  gridContainer.innerHTML = ''; 
+  
+  for (let i = 0; i < 25; i++) {
+    const card = document.createElement('div');
+    card.classList.add('grid-card');
+    gridContainer.appendChild(card);
+    
+    // Эффектная поочередная волна вылета карт
+    setTimeout(() => {
+      card.classList.add('animate');
+    }, i * 15); 
+  }
+}
+
+goTo(0);
+
+</script>
+</body>
+</html>
