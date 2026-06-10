@@ -10,136 +10,29 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-user-select: none;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-
-    /* ==============================
-       КОНТЕЙНЕР ПРИЛОЖЕНИЯ
-    ============================== */
-    #app {
-      position: relative;
-      width: 390px;
-      height: 844px;
-      overflow: hidden;
-      background: #000;
-    }
-
-    /* ==============================
-       КАРУСЕЛЬ
-    ============================== */
-    #carousel {
-      display: flex;
-      width: 1170px; /* 390 × 3 */
-      height: 844px;
-      transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
-    }
-
-    /* ==============================
-       СЛАЙД
-    ============================== */
-    .slide {
-      width: 390px;
-      height: 844px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-    }
-
-    .slide img {
-      width: 390px;
-      height: 844px;
-      object-fit: contain;   /* картинка целиком, не обрезается */
-      object-position: center;
-      pointer-events: none;
-      -webkit-user-drag: none;
-      display: block;
-    }
-
-  </style>
-</head>
-<body>
-
-<div id="app">
-  <div id="carousel">
-
-    <!-- СЛАЙД 1: ОБЛОЖКА -->
-    <div class="slide">
-      <img src="cover.png" alt="Обложка">
-    </div>
-
-    <!-- СЛАЙД 2: ПРАВИЛА -->
-    <div class="slide">
-      <img src="rules.png" alt="Правила">
-    </div>
-
-    <!-- СЛАЙД 3: ФОН ИГРЫ -->
-    <div class="slide">
-      <img src="main_bg.png" alt="Игра">
-    </div>
-
-  </div>
-</div>
-
-<script>
-
-  /* ==============================
-     МАСШТАБ ПОД ЛЮБОЙ ЭКРАН
-  ============================== */
-  function scaleApp() {
-    const app    = document.getElementById('app');
-    const scaleX = window.innerWidth  / 390;
-    const scaleY = window.innerHeight / 844;
-    const scale  = Math.min(scaleX, scaleY);
-    app.style.transformOrigin = 'top left';
-    app.style.transform = `scale(${scale})`;
-    app.style.left = `${(window.innerWidth  - 390 * scale) / 2}px`;
-    app.style.top  = `${(window.innerHeight - 844 * scale) / 2}px`;
-    app.style.position = 'absolute';
-  }
-  scaleApp();
-  window.addEventListener('resize', scaleApp);
-
-  /* ==============================
-     КАРУСЕЛЬ
-  ============================== */
-  const carousel   = document.getElementById('carousel');
-  const SLIDE_W    = 390;
-  const MAX_SLIDE  = 2;
-  let   current    = 0;
-
-  function goTo(idx) {
-    current = Math.max(0, Math.min(MAX_SLIDE, idx));
-    carousel.style.transform = `translateX(-${current * SLIDE_W}px)`;
-  }
-
-  /* --- Свайп --- */
-  let startX = 0;
-  let startY = 0;
-  let isDragging = false;
-
-  carousel.addEventListener('touchstart', e => {
-    startX     = e.touches[0].clientX;
-    startY     = e.touches[0].clientY;
+      -webkit-user-select: none;ста на ПК */
+  document.addEventListener('mousedown', function(e) {
+    startX     = e.clientX;
+    startY     = e.clientY;
     isDragging = true;
-  }, { passive: true });
+  });
 
-  carousel.addEventListener('touchend', e => {
+  document.addEventListener('mouseup', function(e) {
     if (!isDragging) return;
     isDragging = false;
 
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = e.changedTouches[0].clientY - startY
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      if (dx < 0) {
+        goTo(current + 1);
+      } else {
+        goTo(current - 1);
+      }
+    }
+  });
+
+</script>
+</body>
+</html>
