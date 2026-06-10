@@ -134,6 +134,7 @@ html, body {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
+/* Кнопка ПЕРЕМЕШАТЬ — Ювелирный отступ в 2 миллиметра */
 .btn-shuffle {
   display: none;
   width: 55vw;
@@ -143,7 +144,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 8px;
+  margin-top: 2mm; /* Ровно 2 мм сверху от зафиксированной сетки */
 }
 .btn-shuffle:active {
   transform: scale(0.93);
@@ -191,7 +192,6 @@ function goTo(index) {
   carousel.style.transform = "translateX(-" + (current * 33.333) + "%)";
 }
 
-// ЖЕЛЕЗОБЕТОННЫЙ ТАЧ ДЛЯ МОБИЛЬНЫХ (С блокировкой системных жестов)
 carousel.addEventListener('touchstart', function(e) {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
@@ -200,7 +200,6 @@ carousel.addEventListener('touchstart', function(e) {
 
 carousel.addEventListener('touchmove', function(e) {
   if (!isDragging) return;
-  // Не даем браузеру скроллить страницу или дергать экран во время свайпа
   if (e.cancelable) e.preventDefault();
 }, { passive: false });
 
@@ -215,7 +214,6 @@ carousel.addEventListener('touchend', function(e) {
   }
 }, { passive: true });
 
-// МЫШКА ДЛЯ ПК
 carousel.addEventListener('mousedown', function(e) {
   startX = e.clientX;
   startY = e.clientY;
@@ -233,7 +231,6 @@ carousel.addEventListener('mouseup', function(e) {
   }
 });
 
-// УДОБНАЯ НАВИГАЦИЯ КНОПКАМИ КЛАВИАТУРЫ ДЛЯ ТЕСТОВ НА ПК
 window.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowRight') {
     goTo(current + 1);
@@ -252,54 +249,3 @@ const gameContent = document.getElementById('gameContent');
 
 btnStart.addEventListener('click', function() {
   soundStart.currentTime = 0;
-  soundStart.play();
-
-  mainDeck.style.opacity = '0';
-  mainDeck.style.transform = 'scale(0.8)';
-  btnStart.style.opacity = '0';
-  
-  setTimeout(function() {
-    mainDeck.style.display = 'none';
-    btnStart.style.display = 'none';
-    gameContent.style.paddingTop = '3vh';
-    gridContainer.style.display = 'grid';
-    btnShuffle.style.display = 'block';
-    generateCards();
-  }, 350);
-});
-
-btnShuffle.addEventListener('click', function() {
-  soundShuffle.currentTime = 0;
-  soundShuffle.play();
-  
-  const cards = gridContainer.querySelectorAll('.grid-card');
-  cards.forEach(function(card) {
-    card.classList.remove('animate');
-    void card.offsetWidth;
-  });
-  
-  cards.forEach(function(card, index) {
-    setTimeout(function() {
-      card.classList.add('animate');
-    }, index * 12);
-  });
-});
-
-function generateCards() {
-  gridContainer.innerHTML = '';
-  for (var i = 0; i < 25; i++) {
-    (function(index) {
-      var card = document.createElement('div');
-      card.classList.add('grid-card');
-      gridContainer.appendChild(card);
-      setTimeout(function() {
-        card.classList.add('animate');
-      }, index * 15);
-    })(i);
-  }
-}
-
-goTo(0);
-</script>
-</body>
-</html>
