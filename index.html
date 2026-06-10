@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -66,7 +65,7 @@ html, body {
   white-space: nowrap;
 }
 
-/* Контент игрового экрана — ИСПРАВЛЕНО: сдвинули контент чуть вниз (на уровень глаз) */
+/* Контент игрового экрана */
 .game-content {
   position: absolute;
   top: 0; left: 0;
@@ -75,17 +74,15 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Выравнивание сверху, чтобы точно управлять отступом */
-  padding-top: 12vh;            /* Мягкий сдвиг всей группы элементов вниз */
+  justify-content: flex-start;
+  padding-top: 10vh;            /* Чуть приподнял отступ, чтобы мега-колода поместилась вместе с кнопкой */
 }
 
-/* Колода карт — ИСПРАВЛЕНО: еще крупнее */
+/* Колода карт — ИСПРАВЛЕНО: убрали жесткие лимиты, вывели на 92% ширины экрана */
 .deck {
   position: relative;
-  width: 85vw;                  /* Максимальное увеличение ширины */
-  height: 119vw;                /* Пропорция 1:1.4 для сохранения геометрии карт */
-  max-width: 420px;             /* Лимит для больших экранов */
-  max-height: 588px;
+  width: 92vw;                  /* Карты займут максимум доступного места в ширину */
+  height: 133vw;                /* Пропорционально увеличили высоту под размер картинки */
   overflow: visible;
 }
 
@@ -93,17 +90,17 @@ html, body {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 24px;          /* Чуть увеличили скругление под большой размер */
   background-image: url('card_back.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.55);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
 }
 
 /* Стопка — каждая карта чуть смещена */
-.deck-card:nth-child(1) { transform: translate(-10px, -10px) rotate(-3deg); }
-.deck-card:nth-child(2) { transform: translate(-5px, -5px) rotate(-1.5deg); }
+.deck-card:nth-child(1) { transform: translate(-12px, -12px) rotate(-3deg); }
+.deck-card:nth-child(2) { transform: translate(-6px, -6px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
 /* Кнопка */
@@ -111,7 +108,7 @@ html, body {
   width: 60vw;
   max-width: 280px;
   min-width: 200px;
-  margin-top: 45px;             /* Комфортный зазор между огромной колодой и кнопкой */
+  margin-top: 35px;             /* Сбалансированный отступ под новую колоду */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
