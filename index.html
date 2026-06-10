@@ -75,14 +75,14 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 12vh;            /* Тот самый крутой отступ на уровень глаз */
+  padding-top: 10vh;            /* Удерживаем сочный сдвиг всей группы вниз */
 }
 
-/* Колода карт — ИСПРАВЛЕНО: выверили идеальные вертикальные пропорции */
+/* Колода карт — ИСПРАВЛЕНО: жесткая математическая пропорция 9:16 */
 .deck {
   position: relative;
-  width: 72vw;                  /* Чуть сузили, чтобы убрать квадратность */
-  height: 104.4vw;              /* Идеальное соотношение сторон 1 : 1.45 */
+  width: 68vw;                  /* Оптимальная ширина, чтобы карты были крупными */
+  height: 120.88vw;             /* Строго 68 * (16 / 9) — геометрия идеального вертикального прямоугольника */
   overflow: visible;
 }
 
@@ -90,9 +90,9 @@ html, body {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 20px;          /* Аккуратное скругление под формат 9:16 */
   background-image: url('card_back.png');
-  background-size: 100% 100%;   /* Заполняет контейнер без пустых полей */
+  background-size: 100% 100%;   /* Идеально заполняет выверенный контейнер */
   background-position: center;
   background-repeat: no-repeat;
   box-shadow: 0 12px 40px rgba(0,0,0,0.6);
@@ -108,7 +108,7 @@ html, body {
   width: 60vw;
   max-width: 280px;
   min-width: 200px;
-  margin-top: 45px;             /* Комфортный зазор до кнопки */
+  margin-top: 40px;             /* Приятный зазор до кнопки */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
@@ -167,54 +167,3 @@ function goTo(index) {
   current = index;
   carousel.style.transform = `translateX(-${current * 33.333}%)`;
 }
-
-// Touch
-carousel.addEventListener('touchstart', (e) => {
-  startX = e.touches[0].clientX;
-  startY = e.touches[0].clientY;
-  isDragging = true;
-});
-
-carousel.addEventListener('touchend', (e) => {
-  if (!isDragging) return;
-  isDragging = false;
-  const diffX = startX - e.changedTouches[0].clientX;
-  const diffY = startY - e.changedTouches[0].clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-});
-
-// Mouse
-carousel.addEventListener('mousedown', (e) => {
-  startX = e.clientX;
-  startY = e.clientY;
-  isDragging = true;
-});
-
-carousel.addEventListener('mouseup', (e) => {
-  if (!isDragging) return;
-  isDragging = false;
-  const diffX = startX - e.clientX;
-  const diffY = startY - e.clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-});
-
-// Кнопка Начинаем
-const btnStart = document.getElementById('btnStart');
-const soundStart = document.getElementById('soundStart');
-
-btnStart.addEventListener('click', () => {
-  soundStart.currentTime = 0;
-  soundStart.play();
-});
-
-goTo(0);
-
-</script>
-</body>
-</html>
