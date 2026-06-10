@@ -100,18 +100,20 @@ html, body {
 .btn-start:active {
   transform: scale(0.93);
 }
+
+/* ИГРОВАЯ СЕТКА — ИСПРАВЛЕНО: сделали чуть компактнее, чтобы всё влезло */
 .grid-container {
   display: none;
-  width: 92vw;
-  max-width: 420px;
+  width: 86vw;         /* Чуть уменьшили общую ширину сетки */
+  max-width: 380px;
   grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
+  gap: 4px;            /* Сделали зазоры чуть тоньше и изящнее */
   margin: 0 auto;
 }
 .grid-card {
   width: 100%;
   aspect-ratio: 9 / 16;
-  border-radius: 6px;
+  border-radius: 5px;
   background-image: url('card_back.png');
   background-size: 100% 100%;
   background-position: center;
@@ -132,16 +134,18 @@ html, body {
 .grid-card.animate {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
+
+/* Кнопка ПЕРЕМЕШАТЬ */
 .btn-shuffle {
   display: none;
-  width: 60vw;
-  max-width: 280px;
-  min-width: 200px;
+  width: 55vw;        /* Сделали кнопку чуть соразмернее новой сетке */
+  max-width: 260px;
+  min-width: 180px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 20px;
+  margin-top: 16px;   /* Аккуратный отступ сверху */
 }
 .btn-shuffle:active {
   transform: scale(0.93);
@@ -240,7 +244,10 @@ btnStart.addEventListener('click', function() {
   setTimeout(function() {
     mainDeck.style.display = 'none';
     btnStart.style.display = 'none';
-    gameContent.style.paddingTop = '5vh';
+    
+    // ИСПРАВЛЕНО: Сдвигаем сетку чуть выше к верхнему краю экрана, чтобы освободить низ
+    gameContent.style.paddingTop = '3vh';
+    
     gridContainer.style.display = 'grid';
     btnShuffle.style.display = 'block';
     generateCards();
