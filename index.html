@@ -17,7 +17,6 @@ html, body {
   touch-action: none;
   background-color: #000;
 }
-/* ── ДЕСКТОП: Сделали фрейм шире и пропорциональнее ── */
 @media (min-width: 600px) and (pointer: fine) {
   body {
     display: flex;
@@ -36,7 +35,6 @@ html, body {
     box-shadow: 0 0 0 8px #222, 0 30px 80px rgba(0,0,0,0.8);
   }
 }
-/* ── ТЕЛЕФОН: фрейм прозрачный, на весь экран ── */
 @media not all and (min-width: 600px) and (pointer: fine) {
   .phone-frame {
     width: 100%;
@@ -118,7 +116,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: -10px;
+  margin-top: -35px;
 }
 .btn-start:active { transform: scale(0.93); }
 
@@ -171,7 +169,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 8px;
+  margin-top: -25px;
 }
 .btn-shuffle:active { transform: scale(0.93); }
 
@@ -323,11 +321,9 @@ const cardOverlay = document.getElementById('cardOverlay');
 const bigCard = document.getElementById('bigCard');
 const btnReady = document.getElementById('btnReady');
 
-// Массив номеров карт (от 1 до 25)
 let cardsArray = Array.from({length: 25}, (_, i) => i + 1);
-let currentOpenedCardElement = null; // Храним ссылку на карту, которую открыли
+let currentOpenedCardElement = null;
 
-// Функция перемешивания массива (Фишер-Йетс)
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -347,7 +343,7 @@ btnStart.addEventListener('click', function() {
     gameContent.style.paddingTop = '2vh';
     gridContainer.style.display = 'grid';
     btnShuffle.style.display = 'block';
-    shuffle(cardsArray); // Перемешиваем перед выдачей
+    shuffle(cardsArray);
     generateCards();
   }, 350);
 });
@@ -362,13 +358,12 @@ btnShuffle.addEventListener('click', function() {
     void card.offsetWidth;
   });
   
-  shuffle(cardsArray); // Перемешиваем массив заново
+  shuffle(cardsArray);
   
   cards.forEach(function(card, index) {
-    // Сбрасываем карту обратно на рубашку, если она была открыта
     card.style.backgroundImage = "url('card_back.png')";
     card.dataset.opened = "false";
-    card.dataset.fantomId = cardsArray[index]; // Присваиваем новый фант из перемешанного массива
+    card.dataset.fantomId = cardsArray[index];
     
     setTimeout(function() {
       card.classList.add('animate');
@@ -382,17 +377,15 @@ function generateCards() {
     (function(index) {
       var card = document.createElement('div');
       card.classList.add('grid-card');
-      card.dataset.fantomId = cardsArray[index]; // Записываем скрытый ID фанта
+      card.dataset.fantomId = cardsArray[index];
       card.dataset.opened = "false";
       
-      // Клик по маленькой карте в сетке
       card.addEventListener('click', function() {
-        if (card.dataset.opened === "true") return; // Если уже открыта, повторно не открываем
+        if (card.dataset.opened === "true") return;
         
-        currentOpenedCardElement = card; // Запоминаем кликнутую карту
+        currentOpenedCardElement = card;
         const fantomId = card.dataset.fantomId;
         
-        // Включаем звук открытия и выводим большую карту
         soundCardOpen.currentTime = 0;
         soundCardOpen.play();
         
@@ -408,17 +401,14 @@ function generateCards() {
   }
 }
 
-// Клик по кнопке ГОТОВО
 btnReady.addEventListener('click', function() {
   if (!currentOpenedCardElement) return;
   
   soundCardClose.currentTime = 0;
   soundCardClose.play();
   
-  // Закрываем окно
   cardOverlay.classList.remove('active');
   
-  // Переворачиваем маленькую карту в сетке лицом вверх навсегда
   const fantomId = currentOpenedCardElement.dataset.fantomId;
   currentOpenedCardElement.style.backgroundImage = "url('card_" + fantomId + ".png')";
   currentOpenedCardElement.dataset.opened = "true";
