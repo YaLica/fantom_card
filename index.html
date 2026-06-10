@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -19,7 +20,6 @@ html, body {
   touch-action: none;
 }
 
-/* Обёртка карусели */
 .carousel {
   display: flex;
   width: 300%;
@@ -27,7 +27,6 @@ html, body {
   transition: transform 0.4s ease;
 }
 
-/* Каждый экран */
 .screen {
   width: 33.333%;
   height: 100%;
@@ -35,21 +34,34 @@ html, body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  position: relative;
 }
 
-/* Экран 1 — Обложка */
 #screen-cover {
   background-image: url('cover.png');
 }
 
-/* Экран 2 — Правила */
 #screen-rules {
   background-image: url('rules.png');
 }
 
-/* Экран 3 — Игровое поле */
 #screen-game {
   background-image: url('main_bg.png');
+}
+
+/* Плашка */
+.swipe-hint {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
 }
 
 </style>
@@ -57,8 +69,12 @@ html, body {
 <body>
 
 <div class="carousel" id="carousel">
-  <div class="screen" id="screen-cover"></div>
-  <div class="screen" id="screen-rules"></div>
+  <div class="screen" id="screen-cover">
+    <div class="swipe-hint">листай влево ←</div>
+  </div>
+  <div class="screen" id="screen-rules">
+    <div class="swipe-hint">листай влево ←</div>
+  </div>
   <div class="screen" id="screen-game"></div>
 </div>
 
@@ -66,16 +82,13 @@ html, body {
 
 const carousel = document.getElementById('carousel');
 
-// Текущий экран: 0 = обложка, 1 = правила, 2 = игра
 let current = 0;
 const total = 3;
 
-// Стартовые координаты свайпа
 let startX = 0;
 let startY = 0;
 let isDragging = false;
 
-// Показать нужный экран
 function goTo(index) {
   if (index < 0) index = 0;
   if (index >= total) index = total - 1;
@@ -83,7 +96,6 @@ function goTo(index) {
   carousel.style.transform = `translateX(-${current * 33.333}%)`;
 }
 
-// TOUCH события (мобилка)
 carousel.addEventListener('touchstart', (e) => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
@@ -97,17 +109,15 @@ carousel.addEventListener('touchend', (e) => {
   const diffX = startX - e.changedTouches[0].clientX;
   const diffY = startY - e.changedTouches[0].clientY;
 
-  // Свайп горизонтальный (не вертикальный)
   if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
     if (diffX > 0) {
-      goTo(current + 1); // свайп влево — следующий экран
+      goTo(current + 1);
     } else {
-      goTo(current - 1); // свайп вправо — предыдущий экран
+      goTo(current - 1);
     }
   }
 }, { passive: true });
 
-// MOUSE события (десктоп для теста)
 carousel.addEventListener('mousedown', (e) => {
   startX = e.clientX;
   startY = e.clientY;
@@ -130,7 +140,6 @@ carousel.addEventListener('mouseup', (e) => {
   }
 });
 
-// Стартуем с первого экрана
 goTo(0);
 
 </script>
