@@ -16,7 +16,7 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  touch-action: none; /* Возвращаем как было у Клода */
+  touch-action: none;
 }
 
 .carousel {
@@ -72,17 +72,16 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 10vh; /* Сдвиг всей группы вниз на уровень глаз */
+  justify-content: center; /* Центрируем всю сборку, чтобы кнопка и колода были неразлучны */
 }
 
-/* Колода карт — ИСПРАВЛЕНО: чистый формат 9:16 без вреда для свайпов */
+/* Колода карт — Идеальный формат 9:16 */
 .deck {
   position: relative;
-  width: 66vw;               /* Оптимальная ширина для крупных карт */
-  aspect-ratio: 9 / 16;      /* Железная пропорция 9:16 */
+  width: 66vw;
+  aspect-ratio: 9 / 16;
   overflow: visible;
-  margin: 20px;
+  margin: 0 auto; /* Убрали лишние вертикальные отступы */
 }
 
 .deck-card {
@@ -102,7 +101,7 @@ html, body {
 .deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
-/* Кнопка — крупная, читаемая на телефоне */
+/* Кнопка — ИСПРАВЛЕНО: аккуратно подтянули к колоде */
 .btn-start {
   width: 60vw;
   max-width: 280px;
@@ -111,7 +110,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
   touch-action: manipulation;
-  margin-top: 20px;
+  margin-top: 24px; /* Компактный, красивый зазор прямо под картами */
 }
 
 .btn-start:active {
@@ -167,7 +166,7 @@ function goTo(index) {
   carousel.style.transform = `translateX(-${current * 33.333}%)`;
 }
 
-// Touch (Полностью оригинальный рабочий код Клода)
+// Touch
 carousel.addEventListener('touchstart', (e) => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
