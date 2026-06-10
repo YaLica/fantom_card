@@ -75,14 +75,14 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 12vh;            /* Удерживаем расположение на уровне глаз */
+  padding-top: 12vh;            /* Тот самый крутой отступ на уровень глаз */
 }
 
-/* Колода карт — ИСПРАВЛЕНО: железно увеличиваем сам контейнер */
+/* Колода карт — ИСПРАВЛЕНО: выверили идеальные вертикальные пропорции */
 .deck {
   position: relative;
-  width: 82vw;                  /* Широкий, заметный на экране контейнер */
-  height: 115vw;                /* Выверенная высота контейнера */
+  width: 72vw;                  /* Чуть сузили, чтобы убрать квадратность */
+  height: 104.4vw;              /* Идеальное соотношение сторон 1 : 1.45 */
   overflow: visible;
 }
 
@@ -92,7 +92,7 @@ html, body {
   height: 100%;
   border-radius: 16px;
   background-image: url('card_back.png');
-  background-size: 100% 100%;   /* ИСПРАВЛЕНО: картинка теперь обязана занять 100% увеличенного контейнера */
+  background-size: 100% 100%;   /* Заполняет контейнер без пустых полей */
   background-position: center;
   background-repeat: no-repeat;
   box-shadow: 0 12px 40px rgba(0,0,0,0.6);
@@ -108,7 +108,7 @@ html, body {
   width: 60vw;
   max-width: 280px;
   min-width: 200px;
-  margin-top: 45px;             /* Аккуратный зазор под увеличенной колодой */
+  margin-top: 45px;             /* Комфортный зазор до кнопки */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
