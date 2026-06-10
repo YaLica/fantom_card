@@ -16,14 +16,16 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  touch-action: none;
+  background-color: #000;
 }
 
+/* Карусель — явно разрешаем горизонтальные жесты */
 .carousel {
   display: flex;
   width: 300%;
   height: 100%;
   transition: transform 0.4s ease;
+  touch-action: pan-x; 
 }
 
 .screen {
@@ -73,19 +75,16 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
 }
 
-/* Колода карт — ИСПРАВЛЕНО: убрали overflow: hidden и расширили контейнер */
+/* Колода карт — крупная и центрированная */
 .deck {
   position: relative;
-  width: 65vw;
-  height: 91vw;
-  max-width: 340px;
-  max-height: 476px;
+  width: 78vw;
+  height: 109.2vw;
+  max-width: 380px;
+  max-height: 532px;
   overflow: visible;
-  padding: 20px;
-  margin: 20px;
 }
 
 .deck-card {
@@ -94,10 +93,10 @@ html, body {
   height: 100%;
   border-radius: 16px;
   background-image: url('card_back.png');
-  background-size: contain; /* Картинка теперь не сжимается и не режется */
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.45);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
 }
 
 /* Стопка — каждая карта чуть смещена */
@@ -105,11 +104,12 @@ html, body {
 .deck-card:nth-child(2) { transform: translate(-5px, -5px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
-/* Кнопка — крупная, читаемая на телефоне */
+/* Кнопка — размер прежний, безопасный отступ сверху */
 .btn-start {
   width: 60vw;
   max-width: 280px;
   min-width: 200px;
+  margin-top: 40px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
@@ -174,18 +174,18 @@ carousel.addEventListener('touchstart', (e) => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
   isDragging = true;
-}, { passive: true });
+});
 
 carousel.addEventListener('touchend', (e) => {
   if (!isDragging) return;
   isDragging = false;
   const diffX = startX - e.changedTouches[0].clientX;
   const diffY = startY - e.changedTouches[0].clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
     if (diffX > 0) goTo(current + 1);
     else goTo(current - 1);
   }
-}, { passive: true });
+});
 
 // Mouse
 carousel.addEventListener('mousedown', (e) => {
@@ -199,7 +199,7 @@ carousel.addEventListener('mouseup', (e) => {
   isDragging = false;
   const diffX = startX - e.clientX;
   const diffY = startY - e.clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
     if (diffX > 0) goTo(current + 1);
     else goTo(current - 1);
   }
@@ -212,7 +212,6 @@ const soundStart = document.getElementById('soundStart');
 btnStart.addEventListener('click', () => {
   soundStart.currentTime = 0;
   soundStart.play();
-  // дальнейшее действие добавим позже
 });
 
 goTo(0);
