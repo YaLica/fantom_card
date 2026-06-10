@@ -17,6 +17,7 @@ html, body {
   touch-action: none;
   background-color: #000;
 }
+/* ── ДЕСКТОП: Сделали фрейм шире и пропорциональнее ── */
 @media (min-width: 600px) and (pointer: fine) {
   body {
     display: flex;
@@ -35,6 +36,7 @@ html, body {
     box-shadow: 0 0 0 8px #222, 0 30px 80px rgba(0,0,0,0.8);
   }
 }
+/* ── ТЕЛЕФОН: фрейм прозрачный, на весь экран ── */
 @media not all and (min-width: 600px) and (pointer: fine) {
   .phone-frame {
     width: 100%;
@@ -57,15 +59,10 @@ html, body {
   position: relative;
   background-color: #000;
 }
-#screen-cover {
-  background-image: url('cover.png');
-}
-#screen-rules {
-  background-image: url('rules.png');
-}
-#screen-game {
-  background-image: url('main_bg.png');
-}
+#screen-cover { background-image: url('cover.png'); }
+#screen-rules { background-image: url('rules.png'); }
+#screen-game { background-image: url('main_bg.png'); }
+
 .swipe-hint {
   position: absolute;
   top: 16px;
@@ -112,6 +109,7 @@ html, body {
 .deck-card:nth-child(1) { transform: translate(-8px, -8px) rotate(-3deg); }
 .deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
+
 .btn-start {
   width: 60%;
   max-width: 280px;
@@ -120,11 +118,10 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: -35px;
+  margin-top: -10px;
 }
-.btn-start:active {
-  transform: scale(0.93);
-}
+.btn-start:active { transform: scale(0.93); }
+
 .grid-container {
   display: none;
   width: 80%;
@@ -137,6 +134,7 @@ html, body {
   width: 100%;
   aspect-ratio: 9 / 16;
   border-radius: 5px;
+  background-image: url('card_back.png');
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -144,7 +142,12 @@ html, body {
   opacity: 0;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease;
 }
+.grid-card:active {
+  transform: scale(0.95);
+}
+
 @keyframes flyEffect {
   0% {
     opacity: 0;
@@ -158,6 +161,7 @@ html, body {
 .grid-card.animate {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
+
 .btn-shuffle {
   display: none;
   width: 52%;
@@ -167,89 +171,53 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: -25px;
+  margin-top: 8px;
 }
-.btn-shuffle:active {
-  transform: scale(0.93);
-}
+.btn-shuffle:active { transform: scale(0.93); }
 
-/* === ОВЕРЛЕЙ ШАГ 5 === */
+/* ── МОДАЛЬНОЕ ОКНО ДЛЯ УВЕЛИЧЕННОЙ КАРТЫ ── */
 .overlay {
-  display: none;
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 100;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 100;
 }
 .overlay.active {
-  display: flex;
-}
-
-.flip-container {
-  perspective: 1200px;
-  width: 55%;
-  max-width: 240px;
-  aspect-ratio: 9 / 16;
-  margin-bottom: 20px;
-}
-
-.flip-card {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.8s ease;
-}
-
-.flip-card.flipped {
-  transform: rotateY(180deg);
-}
-
-.flip-card-front,
-.flip-card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 12px;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-}
-
-.flip-card-front {
-  background-image: url('card_back.png');
-}
-
-.flip-card-back {
-  transform: rotateY(180deg);
-}
-
-.btn-ready {
-  width: 52%;
-  max-width: 220px;
-  min-width: 160px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-.btn-ready.visible {
   opacity: 1;
   pointer-events: auto;
 }
-.btn-ready:active {
-  transform: scale(0.93);
+.big-card {
+  width: 70%;
+  max-width: 320px;
+  aspect-ratio: 9 / 16;
+  border-radius: 20px;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  transform: scale(0.5);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.overlay.active .big-card {
+  transform: scale(1);
+}
+.btn-ready {
+  width: 45%;
+  max-width: 180px;
+  margin-top: 24px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease;
+}
+.btn-ready:active { transform: scale(0.93); }
 </style>
 </head>
 <body>
@@ -273,16 +241,10 @@ html, body {
         <div class="grid-container" id="gridContainer"></div>
         <img class="btn-shuffle" src="btn_mix.png" id="btnShuffle" alt="Перемешать">
       </div>
-
-      <!-- Оверлей открытия карты -->
-      <div class="overlay" id="overlay">
-        <div class="flip-container">
-          <div class="flip-card" id="flipCard">
-            <div class="flip-card-front"></div>
-            <div class="flip-card-back" id="flipCardBack"></div>
-          </div>
-        </div>
-        <img class="btn-ready" id="btnReady" src="btn_ready.png" alt="Готово">
+      
+      <div class="overlay" id="cardOverlay">
+        <div class="big-card" id="bigCard"></div>
+        <img class="btn-ready" src="btn_ready.png" id="btnReady" alt="Готово">
       </div>
     </div>
   </div>
@@ -347,7 +309,6 @@ window.addEventListener('keydown', function(e) {
   else if (e.key === 'ArrowLeft') goTo(current - 1);
 });
 
-// === ИГРОВАЯ ЛОГИКА ===
 const btnStart = document.getElementById('btnStart');
 const mainDeck = document.getElementById('mainDeck');
 const gridContainer = document.getElementById('gridContainer');
@@ -357,36 +318,23 @@ const soundShuffle = document.getElementById('soundShuffle');
 const soundCardOpen = document.getElementById('soundCardOpen');
 const soundCardClose = document.getElementById('soundCardClose');
 const gameContent = document.getElementById('gameContent');
-const overlay = document.getElementById('overlay');
-const flipCard = document.getElementById('flipCard');
-const flipCardBack = document.getElementById('flipCardBack');
+
+const cardOverlay = document.getElementById('cardOverlay');
+const bigCard = document.getElementById('bigCard');
 const btnReady = document.getElementById('btnReady');
 
-// Массив порядка карт и состояние открытых
-var cardOrder = [];
-var openedCards = []; // индексы открытых ячеек
-var currentOpenIndex = null;
+// Массив номеров карт (от 1 до 25)
+let cardsArray = Array.from({length: 25}, (_, i) => i + 1);
+let currentOpenedCardElement = null; // Храним ссылку на карту, которую открыли
 
-function shuffleArray(arr) {
-  for (var i = arr.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+// Функция перемешивания массива (Фишер-Йетс)
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-  return arr;
 }
 
-function generateCardOrder() {
-  var arr = [];
-  for (var i = 1; i <= 25; i++) {
-    arr.push(i);
-  }
-  cardOrder = shuffleArray(arr);
-  openedCards = [];
-}
-
-// === КНОПКА «НАЧИНАЕМ» ===
 btnStart.addEventListener('click', function() {
   soundStart.currentTime = 0;
   soundStart.play();
@@ -399,32 +347,57 @@ btnStart.addEventListener('click', function() {
     gameContent.style.paddingTop = '2vh';
     gridContainer.style.display = 'grid';
     btnShuffle.style.display = 'block';
-    generateCardOrder();
+    shuffle(cardsArray); // Перемешиваем перед выдачей
     generateCards();
   }, 350);
 });
 
-// === КНОПКА «ПЕРЕМЕШАТЬ» ===
 btnShuffle.addEventListener('click', function() {
   soundShuffle.currentTime = 0;
   soundShuffle.play();
-  generateCardOrder();
-  generateCards();
+  
+  const cards = gridContainer.querySelectorAll('.grid-card');
+  cards.forEach(function(card) {
+    card.classList.remove('animate');
+    void card.offsetWidth;
+  });
+  
+  shuffle(cardsArray); // Перемешиваем массив заново
+  
+  cards.forEach(function(card, index) {
+    // Сбрасываем карту обратно на рубашку, если она была открыта
+    card.style.backgroundImage = "url('card_back.png')";
+    card.dataset.opened = "false";
+    card.dataset.fantomId = cardsArray[index]; // Присваиваем новый фант из перемешанного массива
+    
+    setTimeout(function() {
+      card.classList.add('animate');
+    }, index * 12);
+  });
 });
 
-// === ГЕНЕРАЦИЯ СЕТКИ КАРТ ===
 function generateCards() {
   gridContainer.innerHTML = '';
   for (var i = 0; i < 25; i++) {
     (function(index) {
       var card = document.createElement('div');
       card.classList.add('grid-card');
-      card.style.backgroundImage = "url('card_back.png')";
-      card.dataset.index = index;
-
-      // Тап по карте
+      card.dataset.fantomId = cardsArray[index]; // Записываем скрытый ID фанта
+      card.dataset.opened = "false";
+      
+      // Клик по маленькой карте в сетке
       card.addEventListener('click', function() {
-        openCard(index);
+        if (card.dataset.opened === "true") return; // Если уже открыта, повторно не открываем
+        
+        currentOpenedCardElement = card; // Запоминаем кликнутую карту
+        const fantomId = card.dataset.fantomId;
+        
+        // Включаем звук открытия и выводим большую карту
+        soundCardOpen.currentTime = 0;
+        soundCardOpen.play();
+        
+        bigCard.style.backgroundImage = "url('card_" + fantomId + ".png')";
+        cardOverlay.classList.add('active');
       });
 
       gridContainer.appendChild(card);
@@ -435,56 +408,22 @@ function generateCards() {
   }
 }
 
-// === ШАГ 5: ОТКРЫТИЕ КАРТЫ ===
-function openCard(index) {
-  // Если уже открыта — не реагируем
-  if (openedCards.indexOf(index) !== -1) return;
-
-  currentOpenIndex = index;
-
-  // Устанавливаем лицо карты в оверлее
-  var cardNum = cardOrder[index];
-  flipCardBack.style.backgroundImage = "url('card_" + cardNum + ".png')";
-
-  // Сбрасываем состояние
-  flipCard.classList.remove('flipped');
-  btnReady.classList.remove('visible');
-
-  // Показываем оверлей
-  overlay.classList.add('active');
-
-  // Переворот с задержкой
-  setTimeout(function() {
-    flipCard.classList.add('flipped');
-    soundCardOpen.currentTime = 0;
-    soundCardOpen.play();
-  }, 300);
-
-  // Показываем кнопку «ГОТОВО» после переворота
-  setTimeout(function() {
-    btnReady.classList.add('visible');
-  }, 1100);
-}
-
-// === КНОПКА «ГОТОВО!» ===
+// Клик по кнопке ГОТОВО
 btnReady.addEventListener('click', function() {
+  if (!currentOpenedCardElement) return;
+  
   soundCardClose.currentTime = 0;
   soundCardClose.play();
-
-  // Запоминаем что карта открыта
-  openedCards.push(currentOpenIndex);
-
-  // Обновляем карту в сетке — показываем лицо
-  var gridCards = gridContainer.querySelectorAll('.grid-card');
-  var cardNum = cardOrder[currentOpenIndex];
-  gridCards[currentOpenIndex].style.backgroundImage = "url('card_" + cardNum + ".png')";
-
-  // Закрываем оверлей
-  overlay.classList.remove('active');
-  flipCard.classList.remove('flipped');
-  btnReady.classList.remove('visible');
-
-  currentOpenIndex = null;
+  
+  // Закрываем окно
+  cardOverlay.classList.remove('active');
+  
+  // Переворачиваем маленькую карту в сетке лицом вверх навсегда
+  const fantomId = currentOpenedCardElement.dataset.fantomId;
+  currentOpenedCardElement.style.backgroundImage = "url('card_" + fantomId + ".png')";
+  currentOpenedCardElement.dataset.opened = "true";
+  
+  currentOpenedCardElement = null;
 });
 
 goTo(0);
