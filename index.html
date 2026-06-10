@@ -76,13 +76,13 @@ html, body {
   gap: 32px;
 }
 
-/* Колода карт */
+/* Колода карт — ИСПРАВЛЕНО: убрали overflow: hidden и расширили контейнер */
 .deck {
   position: relative;
-  width: 58.8vw;
-  height: 82.4vw;
-  max-width: 320px;
-  max-height: 448px;
+  width: 65vw;
+  height: 91vw;
+  max-width: 340px;
+  max-height: 476px;
   overflow: visible;
   padding: 20px;
   margin: 20px;
@@ -94,14 +94,15 @@ html, body {
   height: 100%;
   border-radius: 16px;
   background-image: url('card_back.png');
-  background-size: cover;
+  background-size: contain; /* Картинка теперь не сжимается и не режется */
   background-position: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  background-repeat: no-repeat;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.45);
 }
 
 /* Стопка — каждая карта чуть смещена */
-.deck-card:nth-child(1) { transform: translate(-8px, -8px) rotate(-3deg); }
-.deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
+.deck-card:nth-child(1) { transform: translate(-10px, -10px) rotate(-3deg); }
+.deck-card:nth-child(2) { transform: translate(-5px, -5px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
 /* Кнопка — крупная, читаемая на телефоне */
@@ -125,28 +126,23 @@ html, body {
 
 <div class="carousel" id="carousel">
 
-  <!-- Экран 1 — Обложка -->
   <div class="screen" id="screen-cover">
     <div class="swipe-hint">листай влево ←</div>
   </div>
 
-  <!-- Экран 2 — Правила -->
   <div class="screen" id="screen-rules">
     <div class="swipe-hint">листай влево ←</div>
   </div>
 
-  <!-- Экран 3 — Игра -->
   <div class="screen" id="screen-game">
     <div class="game-content">
 
-      <!-- Колода -->
       <div class="deck">
         <div class="deck-card"></div>
         <div class="deck-card"></div>
         <div class="deck-card"></div>
       </div>
 
-      <!-- Кнопка -->
       <img class="btn-start" src="btn_start.png" id="btnStart" alt="Начинаем">
 
     </div>
@@ -154,7 +150,6 @@ html, body {
 
 </div>
 
-<!-- Звук -->
 <audio id="soundStart" src="start.mp3" preload="auto"></audio>
 
 <script>
