@@ -173,6 +173,44 @@ html, body {
 }
 .btn-shuffle:active { transform: scale(0.93); }
 
+/* ── ПОДСКАЗКА «НАЖМИ НА ЛЮБУЮ КАРТУ» ── */
+.hint-tap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.3);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 50;
+}
+.hint-tap.show {
+  animation: hintPulse 2.5s ease forwards;
+}
+@keyframes hintPulse {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
 /* ── МОДАЛЬНОЕ ОКНО ДЛЯ УВЕЛИЧЕННОЙ КАРТЫ ── */
 .overlay {
   position: absolute;
@@ -239,6 +277,9 @@ html, body {
         <div class="grid-container" id="gridContainer"></div>
         <img class="btn-shuffle" src="btn_mix.png" id="btnShuffle" alt="Перемешать">
       </div>
+      
+      <!-- Подсказка -->
+      <div class="hint-tap" id="hintTap">НАЖМИ НА ЛЮБУЮ КАРТУ</div>
       
       <div class="overlay" id="cardOverlay">
         <div class="big-card" id="bigCard"></div>
@@ -316,6 +357,7 @@ const soundShuffle = document.getElementById('soundShuffle');
 const soundCardOpen = document.getElementById('soundCardOpen');
 const soundCardClose = document.getElementById('soundCardClose');
 const gameContent = document.getElementById('gameContent');
+const hintTap = document.getElementById('hintTap');
 
 const cardOverlay = document.getElementById('cardOverlay');
 const bigCard = document.getElementById('bigCard');
@@ -345,6 +387,11 @@ btnStart.addEventListener('click', function() {
     btnShuffle.style.display = 'block';
     shuffle(cardsArray);
     generateCards();
+    
+    // Показываем подсказку один раз
+    setTimeout(function() {
+      hintTap.classList.add('show');
+    }, 300);
   }, 350);
 });
 
