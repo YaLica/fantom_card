@@ -6,17 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Фантом Карты</title>
 
-  <!-- Open Graph для мессенджеров -->
   <meta property="og:title" content="👉 НАЖИМАЙ И ИГРАЙ! 🚀">
   <meta property="og:description" content="Семейная игра с заданиями для всей семьи. Открывай карты и выполняй весёлые задания!">
   <meta property="og:image" content="cover.png">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="">
 
   <style>
-    /* ==============================
-       СБРОС И БАЗА
-    ============================== */
     *, *::before, *::after {
       margin: 0;
       padding: 0;
@@ -39,12 +34,11 @@
 
     img {
       -webkit-user-drag: none;
-      user-drag: none;
       pointer-events: none;
     }
 
     /* ==============================
-       ГЛАВНЫЙ КОНТЕЙНЕР 9:16
+       ГЛАВНЫЙ КОНТЕЙНЕР
     ============================== */
     #app {
       position: relative;
@@ -52,15 +46,18 @@
       height: 844px;
       overflow: hidden;
       background: #000;
+
+      /* На маленьких экранах масштабируем */
+      transform-origin: top center;
     }
 
     /* ==============================
-       КАРУСЕЛЬ (СЛАЙДЕР)
+       КАРУСЕЛЬ
     ============================== */
     #carousel {
       display: flex;
-      width: 300%; /* 3 экрана */
-      height: 100%;
+      width: 1170px; /* 390 * 3 */
+      height: 844px;
       transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
     }
 
@@ -70,18 +67,27 @@
       position: relative;
       flex-shrink: 0;
       overflow: hidden;
-    }
-
-    .slide-bg {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      pointer-events: none;
+      background: #000;
     }
 
     /* ==============================
-       ПЛАШКА "ЛИСТАЙ ВЛЕВО"
+       ОБЛОЖКА И ПРАВИЛА — contain
+       чтобы картинка целиком, без обрезки
+    ============================== */
+    .slide-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;   /* ← ключевое исправление */
+      object-position: center center;
+      pointer-events: none;
+      background: #000;      /* фон вокруг картинки если есть пустые полосы */
+    }
+
+    /* ==============================
+       ПЛАШКА ЛИСТАЙ
     ============================== */
     .swipe-hint {
       position: absolute;
@@ -95,7 +101,6 @@
       color: #fff;
       font-family: Arial, sans-serif;
       font-weight: 600;
-      letter-spacing: 0.3px;
       z-index: 10;
       animation: pulse 2s ease-in-out infinite;
       pointer-events: none;
@@ -106,24 +111,7 @@
       50%       { opacity: 0.6; transform: scale(0.95); }
     }
 
-    /* ==============================
-       СЛАЙД 1 — ОБЛОЖКА
-    ============================== */
-    #slide-cover {
-      cursor: pointer;
-    }
-
-    #slide-cover .tap-zone {
-      position: absolute;
-      inset: 0;
-      z-index: 5;
-      pointer-events: all;
-    }
-
-    /* ==============================
-       СЛАЙД 2 — ПРАВИЛА
-    ============================== */
-    #slide-rules .tap-zone {
+    .tap-zone {
       position: absolute;
       inset: 0;
       z-index: 5;
@@ -133,7 +121,11 @@
     /* ==============================
        СЛАЙД 3 — ИГРОВОЕ ПОЛЕ
     ============================== */
-    #slide-game .game-content {
+    #slide-game .slide-bg {
+      object-fit: cover; /* фон поля — cover, он декоративный */
+    }
+
+    .game-content {
       position: absolute;
       inset: 0;
       display: flex;
@@ -141,15 +133,18 @@
       align-items: center;
       justify-content: center;
       z-index: 2;
+      gap: 20px;
     }
 
-    /* --- Стопка карт (начальный экран поля) --- */
+    /* ==============================
+       СТОПКА КАРТ — БОЛЬШЕ
+    ============================== */
     #deck-area {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 20px;
+      gap: 28px;
       transition: opacity 0.5s, transform 0.5s;
     }
 
@@ -161,55 +156,59 @@
 
     .deck-stack {
       position: relative;
-      width: 120px;
-      height: 168px;
+      width: 180px;   /* было 120 — теперь 180 */
+      height: 252px;  /* пропорция 1:1.4 */
     }
 
     .deck-stack img {
       position: absolute;
-      width: 120px;
-      height: 168px;
-      border-radius: 10px;
+      width: 180px;
+      height: 252px;
+      border-radius: 14px;
       object-fit: cover;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
       pointer-events: none;
     }
 
     .deck-stack img:nth-child(1) {
       top: 0px; left: 0px;
-      transform: rotate(-5deg);
+      transform: rotate(-6deg);
       z-index: 1;
     }
     .deck-stack img:nth-child(2) {
-      top: 4px; left: 2px;
-      transform: rotate(2deg);
+      top: 6px; left: 4px;
+      transform: rotate(3deg);
       z-index: 2;
     }
     .deck-stack img:nth-child(3) {
-      top: 8px; left: 0px;
+      top: 10px; left: 0px;
       transform: rotate(0deg);
       z-index: 3;
     }
 
-    /* --- Кнопка НАЧИНАЕМ --- */
+    /* ==============================
+       КНОПКА НАЧИНАЕМ
+    ============================== */
     #btn-start-game {
       animation: float 1.8s ease-in-out infinite;
       pointer-events: all;
       cursor: pointer;
-      width: 200px;
+      width: 220px;
     }
 
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
-      50%       { transform: translateY(-10px); }
+      50%       { transform: translateY(-12px); }
     }
 
-    /* --- Сетка 5×5 --- */
+    /* ==============================
+       СЕТКА 5×5
+    ============================== */
     #grid-area {
       display: none;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
       opacity: 0;
       transform: scale(0.5);
       transition: opacity 0.6s ease, transform 0.6s ease;
@@ -226,25 +225,27 @@
 
     @keyframes shake {
       0%,100% { transform: translateX(0); }
-      15%      { transform: translateX(-8px) rotate(-1deg); }
-      30%      { transform: translateX(8px) rotate(1deg); }
-      45%      { transform: translateX(-6px) rotate(-0.5deg); }
-      60%      { transform: translateX(6px) rotate(0.5deg); }
-      75%      { transform: translateX(-3px); }
-      90%      { transform: translateX(3px); }
+      15%     { transform: translateX(-8px) rotate(-1deg); }
+      30%     { transform: translateX(8px) rotate(1deg); }
+      45%     { transform: translateX(-6px); }
+      60%     { transform: translateX(6px); }
+      75%     { transform: translateX(-3px); }
+      90%     { transform: translateX(3px); }
     }
 
     #cards-grid {
       display: grid;
-      grid-template-columns: repeat(5, 64px);
-      grid-template-rows: repeat(5, 90px);
-      gap: 6px;
+      grid-template-columns: repeat(5, 62px);
+      grid-template-rows: repeat(5, 87px);
+      gap: 5px;
     }
 
-    /* --- Карточка в сетке --- */
+    /* ==============================
+       КАРТОЧКИ В СЕТКЕ
+    ============================== */
     .card-cell {
-      width: 64px;
-      height: 90px;
+      width: 62px;
+      height: 87px;
       perspective: 400px;
       cursor: pointer;
       pointer-events: all;
@@ -269,7 +270,7 @@
       backface-visibility: hidden;
       border-radius: 6px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
     }
 
     .card-face img {
@@ -279,17 +280,15 @@
       pointer-events: none;
     }
 
-    .card-face.front {
-      /* рубашка */
-    }
-
     .card-face.back {
       transform: rotateY(180deg);
     }
 
-    /* --- Кнопка ПЕРЕМЕШАТЬ --- */
+    /* ==============================
+       КНОПКА ПЕРЕМЕШАТЬ
+    ============================== */
     #btn-mix {
-      width: 180px;
+      width: 200px;
       cursor: pointer;
       pointer-events: all;
       opacity: 0;
@@ -304,6 +303,7 @@
 
     /* ==============================
        ОВЕРЛЕЙ — КРУПНАЯ КАРТА
+       Карта полностью видна, не срезана
     ============================== */
     #overlay {
       position: absolute;
@@ -313,8 +313,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 24px;
-      background: rgba(0,0,0,0.7);
+      gap: 28px;
+      background: rgba(0,0,0,0.75);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
@@ -325,10 +325,17 @@
       pointer-events: all;
     }
 
+    /* 
+      Карта занимает максимум 65% высоты экрана
+      и максимум 80% ширины — пропорционально
+    */
     #overlay-card {
       width: 260px;
       height: 364px;
+      max-width: 75vw;
+      max-height: 55vh;
       perspective: 800px;
+      flex-shrink: 0;
     }
 
     #overlay-card-inner {
@@ -337,7 +344,7 @@
       position: relative;
       transform-style: preserve-3d;
       transform: scale(0.3) rotateY(180deg);
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.8);
     }
@@ -349,18 +356,20 @@
     #overlay-card-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;  /* ← карта целиком без обрезки */
       border-radius: 16px;
       pointer-events: none;
+      display: block;
     }
 
     #btn-ready {
-      width: 180px;
+      width: 190px;
       cursor: pointer;
       pointer-events: all;
       transform: translateY(20px);
       opacity: 0;
-      transition: opacity 0.4s ease 0.5s, transform 0.4s ease 0.5s;
+      transition: opacity 0.4s ease 0.6s, transform 0.4s ease 0.6s;
+      flex-shrink: 0;
     }
 
     #overlay.active #btn-ready {
@@ -373,8 +382,6 @@
 <body>
 
 <div id="app">
-
-  <!-- ======== КАРУСЕЛЬ ======== -->
   <div id="carousel">
 
     <!-- СЛАЙД 1: ОБЛОЖКА -->
@@ -393,67 +400,74 @@
 
     <!-- СЛАЙД 3: ИГРОВОЕ ПОЛЕ -->
     <div class="slide" id="slide-game">
-      <img class="slide-bg" src="main_bg.png" alt="Фон">
+      <img class="slide-bg" src="fantom_cards/images/main_bg.png" alt="Фон">
 
       <div class="game-content">
 
         <!-- Стопка + кнопка НАЧИНАЕМ -->
         <div id="deck-area">
           <div class="deck-stack">
-            <img src="card_back.png" alt="">
-            <img src="card_back.png" alt="">
-            <img src="card_back.png" alt="">
+            <img src="fantom_cards/images/card_back.png" alt="">
+            <img src="fantom_cards/images/card_back.png" alt="">
+            <img src="fantom_cards/images/card_back.png" alt="">
           </div>
-          <img
-            id="btn-start-game"
-            src="btn_start.png"
-            alt="Начинаем"
-          >
+          <img id="btn-start-game" src="fantom_cards/images/btn_start.png" alt="Начинаем">
         </div>
 
         <!-- Сетка 5×5 -->
         <div id="grid-area">
           <div id="cards-grid"></div>
-          <img id="btn-mix" src="btn_mix.png" alt="Перемешать">
+          <img id="btn-mix" src="fantom_cards/images/btn_mix.png" alt="Перемешать">
         </div>
 
       </div>
 
-      <!-- Оверлей крупной карты -->
+      <!-- Оверлей -->
       <div id="overlay">
         <div id="overlay-card">
           <div id="overlay-card-inner">
             <img id="overlay-card-img" src="" alt="Карта">
           </div>
         </div>
-        <img id="btn-ready" src="btn_ready.png" alt="Готово!">
+        <img id="btn-ready" src="fantom_cards/images/btn_ready.png" alt="Готово!">
       </div>
 
     </div>
-    <!-- /СЛАЙД 3 -->
 
   </div>
-  <!-- /КАРУСЕЛЬ -->
-
 </div>
 
 <!-- АУДИО -->
-<audio id="snd-start"      src="start.mp3"      preload="auto"></audio>
-<audio id="snd-card-open"  src="card_open.mp3"  preload="auto"></audio>
-<audio id="snd-card-close" src="card_close.mp3" preload="auto"></audio>
-<audio id="snd-shuffle"    src="shuffle.mp3"    preload="auto"></audio>
+<audio id="snd-start"      src="fantom_cards/audio/start.mp3"      preload="auto"></audio>
+<audio id="snd-card-open"  src="fantom_cards/audio/card_open.mp3"  preload="auto"></audio>
+<audio id="snd-card-close" src="fantom_cards/audio/card_close.mp3" preload="auto"></audio>
+<audio id="snd-shuffle"    src="fantom_cards/audio/shuffle.mp3"    preload="auto"></audio>
 
 <script>
   /* ============================================================
      ЗАЩИТА
   ============================================================ */
-  document.addEventListener('contextmenu',  e => e.preventDefault());
-  document.addEventListener('dragstart',    e => e.preventDefault());
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('dragstart',   e => e.preventDefault());
   document.addEventListener('keydown', e => {
     if (e.key === 'F12') e.preventDefault();
-    if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) e.preventDefault();
-    if (e.ctrlKey && ['U','u'].includes(e.key)) e.preventDefault();
+    if (e.ctrlKey && e.shiftKey && 'IJCijc'.includes(e.key)) e.preventDefault();
+    if (e.ctrlKey && 'Uu'.includes(e.key)) e.preventDefault();
   });
+
+  /* ============================================================
+     МАСШТАБИРОВАНИЕ ПОД ЭКРАН ТЕЛЕФОНА
+  ============================================================ */
+  function scaleApp() {
+    const app = document.getElementById('app');
+    const scaleX = window.innerWidth  / 390;
+    const scaleY = window.innerHeight / 844;
+    const scale  = Math.min(scaleX, scaleY);
+    app.style.transform = `scale(${scale})`;
+    app.style.marginTop = `${(window.innerHeight - 844 * scale) / 2}px`;
+  }
+  scaleApp();
+  window.addEventListener('resize', scaleApp);
 
   /* ============================================================
      УТИЛИТЫ
@@ -468,13 +482,20 @@
     a.play().catch(() => {});
   }
 
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
   /* ============================================================
-     КАРУСЕЛЬ (свайп + тап)
+     КАРУСЕЛЬ
   ============================================================ */
   const carousel   = $('carousel');
   const SLIDE_W    = 390;
-  const MAX_SLIDE  = 2; // 0,1,2
   let currentSlide = 0;
+  const MAX_SLIDE  = 2;
 
   function goToSlide(idx) {
     idx = Math.max(0, Math.min(MAX_SLIDE, idx));
@@ -482,7 +503,6 @@
     carousel.style.transform = `translateX(-${idx * SLIDE_W}px)`;
   }
 
-  // --- Свайп ---
   let touchStartX = 0;
   let touchStartY = 0;
 
@@ -492,66 +512,54 @@
   }, { passive: true });
 
   document.addEventListener('touchend', e => {
-    // Если оверлей открыт — свайп не работает
     if ($('overlay').classList.contains('active')) return;
-
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
-
-    // Горизонтальный свайп (не вертикальный скролл)
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (dx < 0) goToSlide(currentSlide + 1); // влево
-      else        goToSlide(currentSlide - 1); // вправо
+      if (dx < 0) goToSlide(currentSlide + 1);
+      else        goToSlide(currentSlide - 1);
     }
   }, { passive: true });
 
-  // --- Тап по обложке и правилам ---
   $('cover-tap').addEventListener('click', () => goToSlide(1));
   $('rules-tap').addEventListener('click', () => goToSlide(2));
 
   /* ============================================================
      ИГРОВОЕ ПОЛЕ
   ============================================================ */
-  let cardOrder   = []; // текущий порядок карт (числа 1..25)
-  let flippedMap  = {}; // { index: true/false } — открыта ли карта
-  let activeIndex = null; // индекс открытой карты в оверлее
+  let cardOrder   = [];
+  let activeIndex = null;
 
-  // --- Запуск игры ---
-  $('btn-start-game').addEventListener('click', () => {
-    playSound('snd-start');
-    startGame();
-  });
+  $('btn-start-game').addEventListener('click', startGame);
 
   function startGame() {
-    // Скрываем стопку
+    playSound('snd-start');
     const deck = $('deck-area');
     deck.classList.add('hidden');
 
     setTimeout(() => {
       deck.style.display = 'none';
-
-      // Создаём сетку
       buildGrid();
 
       const gridArea = $('grid-area');
       gridArea.style.display = 'flex';
 
-      // Запускаем анимацию появления
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           gridArea.classList.add('visible');
           const btnMix = $('btn-mix');
-          btnMix.classList.add('visible');
+          btnMix.style.display = 'block';
+          requestAnimationFrame(() => {
+            btnMix.classList.add('visible');
+          });
         });
       });
     }, 500);
   }
 
   function buildGrid() {
-    // Создаём массив 1..25 и перемешиваем
     cardOrder = Array.from({ length: 25 }, (_, i) => i + 1);
     shuffle(cardOrder);
-    flippedMap = {};
 
     const grid = $('cards-grid');
     grid.innerHTML = '';
@@ -564,71 +572,81 @@
       cell.innerHTML = `
         <div class="card-inner">
           <div class="card-face front">
-            <img src="card_back.png" alt="рубашка">
+            <img src="fantom_cards/images/card_back.png" alt="рубашка">
           </div>
           <div class="card-face back">
-            <img src="card_${cardNum}.png" alt="карта ${cardNum}">
+            <img src="fantom_cards/images/card_${cardNum}.png" alt="карта ${cardNum}">
           </div>
         </div>
       `;
 
-      cell.addEventListener('click', () => onCardClick(idx, cardNum, cell));
+      cell.addEventListener('click', () => onCardClick(idx, cardNum));
       grid.appendChild(cell);
     });
   }
 
-  function onCardClick(idx, cardNum, cell) {
-    // Если оверлей уже открыт — игнорируем
+  function onCardClick(idx, cardNum) {
     if ($('overlay').classList.contains('active')) return;
 
     playSound('snd-card-open');
     activeIndex = idx;
 
-    // Показываем оверлей
-    $('overlay-card-img').src = `card_${cardNum}.png`;
-    $('overlay').classList.add('active');
+    $('overlay-card-img').src = `fantom_cards/images/card_${cardNum}.png`;
+
+    // Сброс анимации
+    const inner = $('overlay-card-inner');
+    inner.style.transition = 'none';
+    inner.style.transform = 'scale(0.3) rotateY(180deg)';
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        inner.style.transition = '';
+        $('overlay').classList.add('active');
+      });
+    });
   }
 
-  // --- Кнопка ГОТОВО ---
   $('btn-ready').addEventListener('click', () => {
     if (activeIndex === null) return;
     playSound('snd-card-close');
 
-    // Закрываем оверлей
     $('overlay').classList.remove('active');
 
-    // Отмечаем карту как открытую в сетке
     const cell = $('cards-grid').querySelector(`[data-idx="${activeIndex}"]`);
-    if (cell) {
-      cell.classList.add('flipped');
-      flippedMap[activeIndex] = true;
-    }
+    if (cell) cell.classList.add('flipped');
 
     activeIndex = null;
   });
 
-  // --- Кнопка ПЕРЕМЕШАТЬ ---
+  /* ============================================================
+     КНОПКА ПЕРЕМЕШАТЬ
+  ============================================================ */
   $('btn-mix').addEventListener('click', () => {
     playSound('snd-shuffle');
 
     const gridArea = $('grid-area');
     gridArea.classList.add('shake');
 
-    gridArea.addEventListener('animationend', () => {
+    setTimeout(() => {
       gridArea.classList.remove('shake');
-      buildGrid(); // пересобираем сетку заново
-    }, { once: true });
-  });
 
-  /* ============================================================
-     АЛГОРИТМ ФИШЕРА-ЙЕЙТСА
-  ============================================================ */
-  function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  }
+      // Пересобираем сетку заново
+      const btnMix = $('btn-mix');
+
+      // Скрываем сетку
+      gridArea.classList.remove('visible');
+
+      setTimeout(() => {
+        buildGrid();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            gridArea.classList.add('visible');
+          });
+        });
+      }, 300);
+
+    }, 500);
+  });
 
 </script>
 </body>
