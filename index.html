@@ -101,13 +101,13 @@ html, body {
   transform: scale(0.93);
 }
 
-/* ИГРОВАЯ СЕТКА — ИСПРАВЛЕНО: сделали чуть компактнее, чтобы всё влезло */
+/* ИГРОВАЯ СЕТКА — ЗАФИКСИРОВАНО НАМЕРТВО */
 .grid-container {
   display: none;
-  width: 86vw;         /* Чуть уменьшили общую ширину сетки */
+  width: 86vw;
   max-width: 380px;
   grid-template-columns: repeat(5, 1fr);
-  gap: 4px;            /* Сделали зазоры чуть тоньше и изящнее */
+  gap: 4px;
   margin: 0 auto;
 }
 .grid-card {
@@ -135,17 +135,17 @@ html, body {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-/* Кнопка ПЕРЕМЕШАТЬ */
+/* Кнопка ПЕРЕМЕШАТЬ — ИСПРАВЛЕНО: подняли выше к сетке */
 .btn-shuffle {
   display: none;
-  width: 55vw;        /* Сделали кнопку чуть соразмернее новой сетке */
+  width: 55vw;
   max-width: 260px;
   min-width: 180px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 16px;   /* Аккуратный отступ сверху */
+  margin-top: 8px; /* Уменьшили отступ, кнопка аккуратно поджалась вверх */
 }
 .btn-shuffle:active {
   transform: scale(0.93);
@@ -176,6 +176,7 @@ html, body {
 </div>
 
 <audio id="soundStart" src="start.mp3" preload="auto"></audio>
+<audio id="soundShuffle" src="shuffle.mp3" preload="auto"></audio>
 
 <script>
 const carousel = document.getElementById('carousel');
@@ -231,6 +232,7 @@ const mainDeck = document.getElementById('mainDeck');
 const gridContainer = document.getElementById('gridContainer');
 const btnShuffle = document.getElementById('btnShuffle');
 const soundStart = document.getElementById('soundStart');
+const soundShuffle = document.getElementById('soundShuffle');
 const gameContent = document.getElementById('gameContent');
 
 btnStart.addEventListener('click', function() {
@@ -245,7 +247,7 @@ btnStart.addEventListener('click', function() {
     mainDeck.style.display = 'none';
     btnStart.style.display = 'none';
     
-    // ИСПРАВЛЕНО: Сдвигаем сетку чуть выше к верхнему краю экрана, чтобы освободить низ
+    // Адаптируем верхний отступ под сетку
     gameContent.style.paddingTop = '3vh';
     
     gridContainer.style.display = 'grid';
@@ -254,21 +256,7 @@ btnStart.addEventListener('click', function() {
   }, 350);
 });
 
-function generateCards() {
-  gridContainer.innerHTML = '';
-  for (var i = 0; i < 25; i++) {
-    (function(index) {
-      var card = document.createElement('div');
-      card.classList.add('grid-card');
-      gridContainer.appendChild(card);
-      setTimeout(function() {
-        card.classList.add('animate');
-      }, index * 15);
-    })(i);
-  }
-}
-
-goTo(0);
-</script>
-</body>
-</html>
+// КЛИК НА КНОПКУ «ПЕРЕМЕШАТЬ» (Включаем звук)
+btnShuffle.addEventListener('click', function() {
+  soundShuffle.currentTime = 0;
+  soundShuffle.
