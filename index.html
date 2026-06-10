@@ -133,7 +133,7 @@ html, body {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-/* Кнопка ПЕРЕМЕШАТЬ — Ювелирный зазор под сеткой */
+/* Кнопка ПЕРЕМЕШАТЬ — Зазор ровно 6 пикселей под сеткой карт */
 .btn-shuffle {
   display: none;
   width: 55vw;
@@ -143,7 +143,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 6px; /* Идеальное расстояние в ~2мм, проверено и безопасно */
+  margin-top: 6px; 
 }
 .btn-shuffle:active {
   transform: scale(0.93);
@@ -154,4 +154,7 @@ html, body {
 
 <div class="carousel" id="carousel">
   <div class="screen" id="screen-cover">
-    <div class="swipe-hint">листай влево &l
+    <div class="swipe-hint">листай влево ←</div>
+  </div>
+  <div class="screen" id="screen-rules">
+    <div class="swipe-hint
