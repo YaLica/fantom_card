@@ -72,7 +72,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Центрируем всю сборку, чтобы кнопка и колода были неразлучны */
+  justify-content: flex-start; /* Переключаем на верхнее выравнивание */
+  padding-top: 10vh;            /* Мягко опускаем всю собранную конструкцию на уровень глаз */
 }
 
 /* Колода карт — Идеальный формат 9:16 */
@@ -81,7 +82,7 @@ html, body {
   width: 66vw;
   aspect-ratio: 9 / 16;
   overflow: visible;
-  margin: 0 auto; /* Убрали лишние вертикальные отступы */
+  margin: 0 auto;
 }
 
 .deck-card {
@@ -101,7 +102,7 @@ html, body {
 .deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
-/* Кнопка — ИСПРАВЛЕНО: аккуратно подтянули к колоде */
+/* Кнопка — сидит рядышком под колодой */
 .btn-start {
   width: 60vw;
   max-width: 280px;
@@ -110,7 +111,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
   touch-action: manipulation;
-  margin-top: 24px; /* Компактный, красивый зазор прямо под картами */
+  margin-top: 24px;
 }
 
 .btn-start:active {
