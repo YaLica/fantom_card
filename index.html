@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>НАЖИМАЙ И ИГРАЙ! 🚀</title>
 
-<!-- Open Graph для Telegram/WhatsApp -->
 <meta property="og:title" content="👉 НАЖИМАЙ И ИГРАЙ! 🚀">
 <meta property="og:description" content="Весёлая семейная игра с фантами для всей семьи!">
 <meta property="og:image" content="cover.png">
@@ -33,11 +32,9 @@
 
   img {
     -webkit-user-drag: none;
-    user-drag: none;
     pointer-events: none;
   }
 
-  /* ===== КАРУСЕЛЬ ===== */
   .carousel-wrapper {
     display: flex;
     width: 300%;
@@ -63,7 +60,6 @@
     pointer-events: none;
   }
 
-  /* ===== ПЛАШКА "ЛИСТАЙ ВЛЕВО" ===== */
   .swipe-hint {
     position: absolute;
     top: 16px;
@@ -86,7 +82,6 @@
     50% { opacity: 0.6; transform: scale(0.95); }
   }
 
-  /* ===== ИГРОВОЕ ПОЛЕ ===== */
   #slide-game {
     display: flex;
     flex-direction: column;
@@ -104,7 +99,6 @@
     z-index: 0;
   }
 
-  /* ===== СТАРТОВАЯ КОЛОДА ===== */
   #start-deck {
     position: relative;
     z-index: 2;
@@ -148,7 +142,6 @@
     50% { transform: translateY(-12px); }
   }
 
-  /* ===== СЕТКА КАРТ ===== */
   #grid-container {
     position: relative;
     z-index: 2;
@@ -173,6 +166,8 @@
     position: relative;
     cursor: pointer;
     perspective: 600px;
+    opacity: 0;
+    animation: none;
   }
 
   .card-inner {
@@ -207,22 +202,15 @@
     transform: rotateY(180deg);
   }
 
-  /* Анимация появления сетки */
   @keyframes cellAppear {
     from { opacity: 0; transform: scale(0.3); }
     to   { opacity: 1; transform: scale(1); }
-  }
-
-  .card-cell {
-    opacity: 0;
-    animation: none;
   }
 
   .card-cell.animate-in {
     animation: cellAppear 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
   }
 
-  /* Шейк при перемешивании */
   @keyframes shake {
     0%   { transform: translate(0,0) rotate(0deg); }
     15%  { transform: translate(-6px, 3px) rotate(-3deg); }
@@ -237,7 +225,6 @@
     animation: shake 0.6s ease;
   }
 
-  /* ===== КНОПКА ПЕРЕМЕШАТЬ ===== */
   #btn-mix {
     width: 180px;
     cursor: pointer;
@@ -245,7 +232,6 @@
     pointer-events: all !important;
   }
 
-  /* ===== ОВЕРЛЕЙ С ОТКРЫТОЙ КАРТОЙ ===== */
   #card-overlay {
     position: fixed;
     inset: 0;
@@ -295,31 +281,25 @@
     transform: translateY(0);
     opacity: 1;
   }
-
 </style>
 </head>
 <body>
 
-<!-- ===== КАРУСЕЛЬ ===== -->
 <div class="carousel-wrapper" id="carousel">
 
-  <!-- Слайд 1: Обложка -->
   <div class="slide" id="slide-cover">
     <img class="slide-bg" src="cover.png" alt="Обложка">
     <div class="swipe-hint">Листай влево ➔</div>
   </div>
 
-  <!-- Слайд 2: Правила -->
   <div class="slide" id="slide-rules">
     <img class="slide-bg" src="rules.png" alt="Правила">
     <div class="swipe-hint">Листай влево ➔</div>
   </div>
 
-  <!-- Слайд 3: Игровое поле -->
   <div class="slide" id="slide-game">
     <img class="game-bg" src="fantom_cards/images/main_bg.png" alt="Фон">
 
-    <!-- Стартовая колода -->
     <div id="start-deck">
       <div class="deck-stack">
         <img src="fantom_cards/images/card_back.png" alt="">
@@ -329,31 +309,24 @@
       <img src="fantom_cards/images/btn_start.png" alt="Начинаем" id="btn-start">
     </div>
 
-    <!-- Сетка + кнопка Перемешать -->
     <div id="grid-container">
       <div id="cards-grid"></div>
       <img src="fantom_cards/images/btn_mix.png" alt="Перемешать" id="btn-mix">
     </div>
-
   </div>
 </div>
 
-<!-- ===== ОВЕРЛЕЙ ОТКРЫТОЙ КАРТЫ ===== -->
 <div id="card-overlay">
   <img id="overlay-card-img" src="" alt="Карта">
   <img src="fantom_cards/images/btn_ready.png" alt="Готово" id="btn-ready">
 </div>
 
-<!-- ===== ЗВУКИ ===== -->
 <audio id="snd-start"      src="fantom_cards/audio/start.mp3"      preload="auto"></audio>
 <audio id="snd-card-open"  src="fantom_cards/audio/card_open.mp3"  preload="auto"></audio>
 <audio id="snd-card-close" src="fantom_cards/audio/card_close.mp3" preload="auto"></audio>
 <audio id="snd-shuffle"    src="fantom_cards/audio/shuffle.mp3"    preload="auto"></audio>
 
 <script>
-// ================================================
-//  ЗАЩИТА КОНТЕНТА
-// ================================================
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('dragstart',   e => e.preventDefault());
 document.addEventListener('selectstart', e => e.preventDefault());
@@ -367,16 +340,12 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ================================================
-//  КАРУСЕЛЬ
-// ================================================
 const carousel   = document.getElementById('carousel');
 let currentSlide = 0;
 const maxSlide   = 2;
-
-let touchStartX = 0;
-let touchStartY = 0;
-let isSwiping   = false;
+let touchStartX  = 0;
+let touchStartY  = 0;
+let isSwiping    = false;
 
 function goToSlide(n) {
   currentSlide = Math.max(0, Math.min(n, maxSlide));
@@ -400,7 +369,6 @@ carousel.addEventListener('touchend', e => {
   isSwiping = false;
 }, { passive: true });
 
-// Клик по слайдам 0 и 1 — тоже листает
 document.getElementById('slide-cover').addEventListener('click', () => {
   if (currentSlide === 0) goToSlide(1);
 });
@@ -408,13 +376,10 @@ document.getElementById('slide-rules').addEventListener('click', () => {
   if (currentSlide === 1) goToSlide(2);
 });
 
-// ================================================
-//  ИГРА: ДАННЫЕ
-// ================================================
 const TOTAL_CARDS = 25;
-let cardOrder  = [];   // массив индексов карт [1..25] перемешанный
-let openedSet  = new Set(); // индексы открытых позиций в сетке
-let activeCell = null; // текущая нажатая ячейка
+let cardOrder  = [];
+let openedSet  = new Set();
+let activeCell = null;
 
 function shuffleArray(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -431,9 +396,6 @@ function playSound(id) {
   el.play().catch(() => {});
 }
 
-// ================================================
-//  ПОСТРОИТЬ СЕТКУ
-// ================================================
 function buildGrid() {
   cardOrder = shuffleArray([...Array(TOTAL_CARDS)].map((_, i) => i + 1));
   openedSet.clear();
@@ -462,9 +424,6 @@ function buildGrid() {
   }
 }
 
-// ================================================
-//  АНИМАЦИЯ ПОЯВЛЕНИЯ СЕТКИ
-// ================================================
 function animateGridIn() {
   const cells = document.querySelectorAll('.card-cell');
   cells.forEach((cell, i) => {
@@ -473,9 +432,6 @@ function animateGridIn() {
   });
 }
 
-// ================================================
-//  КНОПКА "НАЧИНАЕМ"
-// ================================================
 document.getElementById('btn-start').addEventListener('click', () => {
   const deck        = document.getElementById('start-deck');
   const gridWrapper = document.getElementById('grid-container');
@@ -483,7 +439,6 @@ document.getElementById('btn-start').addEventListener('click', () => {
 
   playSound('snd-start');
 
-  // Скрываем колоду
   deck.style.opacity = '0';
   deck.style.pointerEvents = 'none';
 
@@ -493,7 +448,6 @@ document.getElementById('btn-start').addEventListener('click', () => {
     gridWrapper.style.display = 'flex';
     btnMix.style.display = 'block';
 
-    // Запускаем анимацию через 1 кадр
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         animateGridIn();
@@ -502,16 +456,11 @@ document.getElementById('btn-start').addEventListener('click', () => {
   }, 500);
 });
 
-// ================================================
-//  КЛИК ПО КАРТЕ
-// ================================================
 function onCardClick(e) {
   const cell = e.currentTarget;
   const pos  = parseInt(cell.dataset.pos);
 
-  // Если карта уже открыта — игнорируем
   if (openedSet.has(pos)) return;
-  // Если оверлей уже активен — игнорируем
   if (document.getElementById('card-overlay').classList.contains('active')) return;
 
   activeCell = cell;
@@ -519,7 +468,6 @@ function onCardClick(e) {
 
   playSound('snd-card-open');
 
-  // Показываем оверлей
   const overlay = document.getElementById('card-overlay');
   const img     = document.getElementById('overlay-card-img');
   img.src = `fantom_cards/images/card_${cardNum}.png`;
@@ -527,9 +475,6 @@ function onCardClick(e) {
   overlay.classList.add('active');
 }
 
-// ================================================
-//  КНОПКА "ГОТОВО"
-// ================================================
 document.getElementById('btn-ready').addEventListener('click', () => {
   if (!activeCell) return;
 
@@ -538,10 +483,8 @@ document.getElementById('btn-ready').addEventListener('click', () => {
   const overlay = document.getElementById('card-overlay');
   const pos     = parseInt(activeCell.dataset.pos);
 
-  // Закрываем оверлей
   overlay.classList.remove('active');
 
-  // Открываем карту в сетке после окончания анимации оверлея
   setTimeout(() => {
     openedSet.add(pos);
     activeCell.classList.add('is-open');
@@ -549,22 +492,16 @@ document.getElementById('btn-ready').addEventListener('click', () => {
   }, 400);
 });
 
-// ================================================
-//  КНОПКА "ПЕРЕМЕШАТЬ"
-// ================================================
 document.getElementById('btn-mix').addEventListener('click', () => {
   const grid = document.getElementById('cards-grid');
 
   playSound('snd-shuffle');
 
-  // Шейк-анимация
   grid.classList.add('shaking');
 
   setTimeout(() => {
     grid.classList.remove('shaking');
-    // Пересобираем сетку
     buildGrid();
-    // Сброс анимаций
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         animateGridIn();
@@ -573,9 +510,6 @@ document.getElementById('btn-mix').addEventListener('click', () => {
   }, 700);
 });
 
-// ================================================
-//  СТАРТ
-// ================================================
 goToSlide(0);
 </script>
 </body>
