@@ -173,41 +173,48 @@ html, body {
 }
 .btn-shuffle:active { transform: scale(0.93); }
 
-/* ── ПОДСКАЗКА «НАЖМИ НА ЛЮБУЮ КАРТУ» ── */
-.hint-tap {
+/* ── НАДПИСЬ-ПОДСКАЗКА С АНИМАЦИЕЙ ── */
+.start-hint {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.3);
+  transform: translate(-50%, -50%) scale(0.6);
+  background: rgba(0, 0, 0, 0.75);
   color: #fff;
-  font-size: 22px;
-  font-weight: 700;
-  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 14px 24px;
+  border-radius: 30px;
   white-space: nowrap;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
   pointer-events: none;
   opacity: 0;
-  z-index: 50;
+  display: none;
+  z-index: 90;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(5px);
 }
-.hint-tap.show {
-  animation: hintPulse 2.5s ease forwards;
-}
-@keyframes hintPulse {
+
+@keyframes hintFadeScale {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3);
+    transform: translate(-50%, -50%) scale(0.6);
   }
-  30% {
+  20% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.05);
   }
-  60% {
+  35% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  75% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: translate(-50%, -50%) scale(1.2);
   }
 }
 
@@ -278,8 +285,7 @@ html, body {
         <img class="btn-shuffle" src="btn_mix.png" id="btnShuffle" alt="Перемешать">
       </div>
       
-      <!-- Подсказка -->
-      <div class="hint-tap" id="hintTap">НАЖМИ НА ЛЮБУЮ КАРТУ</div>
+      <div class="start-hint" id="startHint">НАЖМИ НА ЛЮБУЮ КАРТУ</div>
       
       <div class="overlay" id="cardOverlay">
         <div class="big-card" id="bigCard"></div>
@@ -357,11 +363,10 @@ const soundShuffle = document.getElementById('soundShuffle');
 const soundCardOpen = document.getElementById('soundCardOpen');
 const soundCardClose = document.getElementById('soundCardClose');
 const gameContent = document.getElementById('gameContent');
-const hintTap = document.getElementById('hintTap');
-
 const cardOverlay = document.getElementById('cardOverlay');
 const bigCard = document.getElementById('bigCard');
 const btnReady = document.getElementById('btnReady');
+const startHint = document.getElementById('startHint');
 
 let cardsArray = Array.from({length: 25}, (_, i) => i + 1);
 let currentOpenedCardElement = null;
@@ -388,10 +393,15 @@ btnStart.addEventListener('click', function() {
     shuffle(cardsArray);
     generateCards();
     
-    // Показываем подсказку один раз
+    // Запуск красивой одноразовой подсказки
+    startHint.style.display = 'block';
+    startHint.style.animation = 'hintFadeScale 2.5s ease-in-out forwards';
+    
+    // Полностью убираем из верстки после завершения анимации
     setTimeout(function() {
-      hintTap.classList.add('show');
-    }, 300);
+      startHint.style.display = 'none';
+    }, 2500);
+    
   }, 350);
 });
 
