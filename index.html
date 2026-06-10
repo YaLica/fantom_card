@@ -150,34 +150,54 @@ html, body {
 }
 
 /* =========================================================
-   МАГИЯ ДЛЯ КОМПЬЮТЕРОВ (Экраны шире 500px)
-   На телефонах этот блок игнорируется, а на ПК делает красивое окошко
+   ИСПРАВЛЕННАЯ МАГИЯ ДЛЯ ПК
    ========================================================= */
 @media (min-width: 501px) {
   html, body {
-    background-color: #111; /* Темный красивый фон вокруг телефона на ПК */
+    background-color: #111;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .carousel {
-    width: 420px; /* Фиксированная ширина виртуального "смартфона" на ПК */
-    height: 840px; /* Фиксированная высота */
-    max-height: 90vh; /* Чтобы гарантированно влезало по высоте в любой монитор */
-    aspect-ratio: 9 / 19;
-    border-radius: 24px; /* Закругляем углы нашего "экрана" */
-    box-shadow: 0 20px 60px rgba(0,0,0,0.8); /* Красивая тень */
+  /* Ограничиваем общую обертку для стабильности карусели */
+  body {
     overflow: hidden;
   }
-  .screen {
-    width: 33.333%; /* Внутри окошка логика карусели остается идеальной */
-    height: 100%;
+  .carousel {
+    width: 420px;
+    height: 840px;
+    max-height: 92vh;
+    aspect-ratio: 9 / 19;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    overflow: hidden;
+    position: relative;
   }
-  /* Корректируем размеры элементов для фиксированного окна ПК */
-  .deck { width: 250px; }
-  .btn-start { width: 220px; }
-  .grid-container { width: 340px; }
-  .btn-shuffle { width: 200px; }
+  .screen {
+    width: 33.333%;
+    height: 100%;
+    /* Жестко фиксируем фоны внутри ПК-окошка, чтобы не съезжали */
+    background-size: 100% 100% !important;
+    background-position: center center !important;
+  }
+  /* Выравниваем размеры элементов внутри рамки */
+  .game-content {
+    padding-top: 80px;
+  }
+  .deck { 
+    width: 240px; 
+  }
+  .btn-start { 
+    width: 210px; 
+    margin-top: 10px;
+  }
+  .grid-container { 
+    width: 340px; 
+  }
+  .btn-shuffle { 
+    width: 190px; 
+    margin-top: 12px;
+  }
 }
 </style>
 </head>
@@ -233,95 +253,4 @@ carousel.addEventListener('touchend', function(e) {
   isDragging = false;
   var diffX = startX - e.changedTouches[0].clientX;
   var diffY = startY - e.changedTouches[0].clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-});
-
-carousel.addEventListener('mousedown', function(e) {
-  startX = e.clientX;
-  startY = e.clientY;
-  isDragging = true;
-});
-
-carousel.addEventListener('mouseup', function(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  var diffX = startX - e.clientX;
-  var diffY = startY - e.clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-});
-
-window.addEventListener('keydown', function(e) {
-  if (e.key === 'ArrowRight') {
-    goTo(current + 1);
-  } else if (e.key === 'ArrowLeft') {
-    goTo(current - 1);
-  }
-});
-
-const btnStart = document.getElementById('btnStart');
-const mainDeck = document.getElementById('mainDeck');
-const gridContainer = document.getElementById('gridContainer');
-const btnShuffle = document.getElementById('btnShuffle');
-const soundStart = document.getElementById('soundStart');
-const soundShuffle = document.getElementById('soundShuffle');
-const gameContent = document.getElementById('gameContent');
-
-btnStart.addEventListener('click', function() {
-  soundStart.currentTime = 0;
-  soundStart.play();
-
-  mainDeck.style.opacity = '0';
-  mainDeck.style.transform = 'scale(0.8)';
-  btnStart.style.opacity = '0';
-  
-  setTimeout(function() {
-    mainDeck.style.display = 'none';
-    btnStart.style.display = 'none';
-    gameContent.style.paddingTop = '2vh';
-    gridContainer.style.display = 'grid';
-    btnShuffle.style.display = 'block';
-    generateCards();
-  }, 350);
-});
-
-btnShuffle.addEventListener('click', function() {
-  soundShuffle.currentTime = 0;
-  soundShuffle.play();
-  
-  const cards = gridContainer.querySelectorAll('.grid-card');
-  cards.forEach(function(card) {
-    card.classList.remove('animate');
-    void card.offsetWidth;
-  });
-  
-  cards.forEach(function(card, index) {
-    setTimeout(function() {
-      card.classList.add('animate');
-    }, index * 12);
-  });
-});
-
-function generateCards() {
-  gridContainer.innerHTML = '';
-  for (var i = 0; i < 25; i++) {
-    (function(index) {
-      var card = document.createElement('div');
-      card.classList.add('grid-card');
-      gridContainer.appendChild(card);
-      setTimeout(function() {
-        card.classList.add('animate');
-      }, index * 15);
-    })(i);
-  }
-}
-
-goTo(0);
-</script>
-</body>
-</html>
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) >
