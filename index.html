@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -75,18 +73,19 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 32px;
 }
 
-/* Колода карт — ИСПРАВЛЕНО: увеличен размер, строго по центру с минимальными отступами */
+/* Колода карт — ИСПРАВЛЕНО: убрали overflow: hidden и расширили контейнер */
 .deck {
   position: relative;
-  width: 78vw;          /* Колода стала заметно крупнее на экране смартфона */
-  height: 109.2vw;      /* Пропорция 1:1.4 для идеального сохранения формы карт */
-  max-width: 400px;     /* Ограничение для больших экранов */
-  max-height: 560px;
+  width: 65vw;
+  height: 91vw;
+  max-width: 340px;
+  max-height: 476px;
   overflow: visible;
-  padding: 0;
-  margin: 0 auto;       /* Центрирование по горизонтали */
+  padding: 20px;
+  margin: 20px;
 }
 
 .deck-card {
@@ -95,10 +94,10 @@ html, body {
   height: 100%;
   border-radius: 16px;
   background-image: url('card_back.png');
-  background-size: contain;
+  background-size: contain; /* Картинка теперь не сжимается и не режется */
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5); /* Сделали тень еще глубже для объема */
+  box-shadow: 0 6px 25px rgba(0,0,0,0.45);
 }
 
 /* Стопка — каждая карта чуть смещена */
@@ -106,12 +105,11 @@ html, body {
 .deck-card:nth-child(2) { transform: translate(-5px, -5px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
-/* Кнопка — ИСПРАВЛЕНО: размер прежний, но добавили безопасный отступ сверху */
+/* Кнопка — крупная, читаемая на телефоне */
 .btn-start {
   width: 60vw;
   max-width: 280px;
   min-width: 200px;
-  margin-top: 40px;     /* Аккуратно отодвинули кнопку вниз от большой колоды */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
@@ -185,3 +183,40 @@ carousel.addEventListener('touchend', (e) => {
   const diffY = startY - e.changedTouches[0].clientY;
   if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
     if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
+  }
+}, { passive: true });
+
+// Mouse
+carousel.addEventListener('mousedown', (e) => {
+  startX = e.clientX;
+  startY = e.clientY;
+  isDragging = true;
+});
+
+carousel.addEventListener('mouseup', (e) => {
+  if (!isDragging) return;
+  isDragging = false;
+  const diffX = startX - e.clientX;
+  const diffY = startY - e.clientY;
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
+  }
+});
+
+// Кнопка Начинаем
+const btnStart = document.getElementById('btnStart');
+const soundStart = document.getElementById('soundStart');
+
+btnStart.addEventListener('click', () => {
+  soundStart.currentTime = 0;
+  soundStart.play();
+  // дальнейшее действие добавим позже
+});
+
+goTo(0);
+
+</script>
+</body>
+</html>
