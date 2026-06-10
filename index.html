@@ -1,38 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Фантом Карты</title>
-  <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Фантом Карты</title>
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-user-select: none;ста на ПК */
-  document.addEventListener('mousedown', function(e) {
-    startX     = e.clientX;
-    startY     = e.clientY;
-    isDragging = true;
-  });
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="👉 НАЖИМАЙ И ИГРАЙ! 🚀">
+    <meta property="og:description" content="Космические фаны для всей семьи. Открывай карты, выполняй задания Инопов!">
+    <meta property="og:image" content="cover.png">
 
-  document.addEventListener('mouseup', function(e) {
-    if (!isDragging) return;
-    isDragging = false;
+    <link rel="stylesheet" href="style.css">
+</head>
+<body oncontextmenu="return false;" ondragstart="return false;">
 
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
+    <div class="slider-container" id="slider">
+        
+        <section class="screen" id="screen-cover" style="background-image: url('cover.png');">
+            <div class="hint-swipe">Листай влево ➔</div>
+        </section>
 
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (dx < 0) {
-        goTo(current + 1);
-      } else {
-        goTo(current - 1);
-      }
-    }
-  });
+        <section class="screen" id="screen-rules" style="background-image: url('rules.png');">
+            <div class="hint-swipe">Листай влево ➔</div>
+        </section>
 
-</script>
+        <section class="screen" id="screen-game" style="background-image: url('main_bg.png');">
+            </section>
+
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
