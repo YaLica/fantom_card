@@ -5,13 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Fantom Card</title>
 <style>
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 html, body {
   width: 100%;
   height: 100%;
@@ -19,14 +17,12 @@ html, body {
   touch-action: none;
   background-color: #000;
 }
-
 .carousel {
   display: flex;
   width: 300%;
   height: 100%;
   transition: transform 0.4s ease;
 }
-
 .screen {
   width: 33.333%;
   height: 100%;
@@ -36,20 +32,15 @@ html, body {
   background-repeat: no-repeat;
   position: relative;
 }
-
 #screen-cover {
   background-image: url('cover.png');
 }
-
 #screen-rules {
   background-image: url('rules.png');
 }
-
 #screen-game {
   background-image: url('main_bg.png');
 }
-
-/* Плашка */
 .swipe-hint {
   position: absolute;
   top: 16px;
@@ -63,8 +54,6 @@ html, body {
   backdrop-filter: blur(4px);
   white-space: nowrap;
 }
-
-/* Контент игрового экрана */
 .game-content {
   position: absolute;
   top: 0; left: 0;
@@ -74,10 +63,8 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 10vh;            /* Наша идеальная зафиксированная высота */
+  padding-top: 10vh;
 }
-
-/* Колода карт — ЗАФИКСИРОВАНО НАМЕРТВО */
 .deck {
   position: relative;
   width: 66vw;
@@ -86,7 +73,6 @@ html, body {
   margin: 0 auto;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
-
 .deck-card {
   position: absolute;
   width: 100%;
@@ -98,12 +84,9 @@ html, body {
   background-repeat: no-repeat;
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
-
 .deck-card:nth-child(1) { transform: translate(-8px, -8px) rotate(-3deg); }
 .deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
-
-/* Кнопка — НАЧИНАЕМ */
 .btn-start {
   width: 60vw;
   max-width: 280px;
@@ -112,28 +95,23 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: -10px; 
+  margin-top: -10px;
 }
-
 .btn-start:active {
   transform: scale(0.93);
 }
-
-/* ИГРОВАЯ СЕТКА 5х5 (Ждет активации) */
 .grid-container {
-  display: none; 
-  width: 92vw;   
+  display: none;
+  width: 92vw;
   max-width: 420px;
   grid-template-columns: repeat(5, 1fr);
-  gap: 5px;      
+  gap: 5px;
   margin: 0 auto;
 }
-
-/* Маленькие карточки в сетке — ЖЕЛЕЗНАЯ ПРОПОРЦИЯ 9:16 */
 .grid-card {
   width: 100%;
-  aspect-ratio: 9 / 16; 
-  border-radius: 6px;   
+  aspect-ratio: 9 / 16;
+  border-radius: 6px;
   background-image: url('card_back.png');
   background-size: 100% 100%;
   background-position: center;
@@ -141,8 +119,6 @@ html, body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   opacity: 0;
 }
-
-/* Красивая и безопасная CSS-анимация разлета из центра */
 @keyframes flyEffect {
   0% {
     opacity: 0;
@@ -153,12 +129,9 @@ html, body {
     transform: scale(1) translateY(0) rotate(0deg);
   }
 }
-
 .grid-card.animate {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
-
-/* Кнопка ПЕРЕМЕШАТЬ — теперь это твоя btn_mix.png */
 .btn-shuffle {
   display: none;
   width: 60vw;
@@ -168,53 +141,40 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 20px; /* Приятный зазор под разлетевшейся сеткой */
+  margin-top: 20px;
 }
-
 .btn-shuffle:active {
   transform: scale(0.93);
 }
-
 </style>
 </head>
 <body>
 
 <div class="carousel" id="carousel">
-
   <div class="screen" id="screen-cover">
-    <div class="swipe-hint">листай влево ←</div>
+    <div class="swipe-hint">листай влево &larr;</div>
   </div>
-
   <div class="screen" id="screen-rules">
-    <div class="swipe-hint">листай влево ←</div>
+    <div class="swipe-hint">листай влево &larr;</div>
   </div>
-
   <div class="screen" id="screen-game">
     <div class="game-content" id="gameContent">
-
       <div class="deck" id="mainDeck">
         <div class="deck-card"></div>
         <div class="deck-card"></div>
         <div class="deck-card"></div>
       </div>
-
       <img class="btn-start" src="btn_start.png" id="btnStart" alt="Начинаем">
-
       <div class="grid-container" id="gridContainer"></div>
-
       <img class="btn-shuffle" src="btn_mix.png" id="btnShuffle" alt="Перемешать">
-
     </div>
   </div>
-
 </div>
 
 <audio id="soundStart" src="start.mp3" preload="auto"></audio>
 
 <script>
-
 const carousel = document.getElementById('carousel');
-
 let current = 0;
 const total = 3;
 let startX = 0;
@@ -225,46 +185,43 @@ function goTo(index) {
   if (index < 0) index = 0;
   if (index >= total) index = total - 1;
   current = index;
-  carousel.style.transform = `translateX(-${current * 33.333}%)`;
+  carousel.style.transform = "translateX(-" + (current * 33.333) + "%)";
 }
 
-// Touch
-carousel.addEventListener('touchstart', (e) => {
+carousel.addEventListener('touchstart', function(e) {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
   isDragging = true;
 }, { passive: true });
 
-carousel.addEventListener('touchend', (e) => {
+carousel.addEventListener('touchend', function(e) {
   if (!isDragging) return;
   isDragging = false;
-  const diffX = startX - e.changedTouches[0].clientX;
-  const diffY = startY - e.changedTouches[0].clientY;
+  var diffX = startX - e.changedTouches[0].clientX;
+  var diffY = startY - e.changedTouches[0].clientY;
   if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
     if (diffX > 0) goTo(current + 1);
     else goTo(current - 1);
   }
 }, { passive: true });
 
-// Mouse
-carousel.addEventListener('mousedown', (e) => {
+carousel.addEventListener('mousedown', function(e) {
   startX = e.clientX;
   startY = e.clientY;
   isDragging = true;
 });
 
-carousel.addEventListener('mouseup', (e) => {
+carousel.addEventListener('mouseup', function(e) {
   if (!isDragging) return;
   isDragging = false;
-  const diffX = startX - e.clientX;
-  const diffY = startY - e.clientY;
+  var diffX = startX - e.clientX;
+  var diffY = startY - e.clientY;
   if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
     if (diffX > 0) goTo(current + 1);
     else goTo(current - 1);
   }
 });
 
-// Логика кнопки «НАЧИНАЕМ» и разлета 25 карт
 const btnStart = document.getElementById('btnStart');
 const mainDeck = document.getElementById('mainDeck');
 const gridContainer = document.getElementById('gridContainer');
@@ -272,48 +229,39 @@ const btnShuffle = document.getElementById('btnShuffle');
 const soundStart = document.getElementById('soundStart');
 const gameContent = document.getElementById('gameContent');
 
-btnStart.addEventListener('click', () => {
+btnStart.addEventListener('click', function() {
   soundStart.currentTime = 0;
   soundStart.play();
 
-  // Исчезновение элементов колоды
   mainDeck.style.opacity = '0';
   mainDeck.style.transform = 'scale(0.8)';
   btnStart.style.opacity = '0';
   
-  setTimeout(() => {
+  setTimeout(function() {
     mainDeck.style.display = 'none';
     btnStart.style.display = 'none';
-
-    // Мягко адаптируем верхний отступ под сетку
     gameContent.style.paddingTop = '5vh';
-
-    // Проявляем сетку и кнопку «Перемешать»
     gridContainer.style.display = 'grid';
     btnShuffle.style.display = 'block';
-
-    // Создаем 25 карт
     generateCards();
   }, 350);
 });
 
 function generateCards() {
   gridContainer.innerHTML = '';
-  
-  for (let i = 0; i < 25; i++) {
-    const card = document.createElement('div');
-    card.classList.add('grid-card');
-    gridContainer.appendChild(card);
-    
-    // Эффект веера (карты вылетают одна за другой с микрозадержкой)
-    setTimeout(() => {
-      card.classList.add('animate');
-    }, i * 15);
+  for (var i = 0; i < 25; i++) {
+    (function(index) {
+      var card = document.createElement('div');
+      card.classList.add('grid-card');
+      gridContainer.appendChild(card);
+      setTimeout(function() {
+        card.classList.add('animate');
+      }, index * 15);
+    })(i);
   }
 }
 
 goTo(0);
-
 </script>
 </body>
 </html>
