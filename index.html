@@ -101,14 +101,14 @@ html, body {
   transform: scale(0.93);
 }
 
-/* ИГРОВАЯ СЕТКА — Добавили жесткий нижний отступ для кнопки */
+/* Оптимизировали размеры сетки, чтобы поднять кнопку физически выше */
 .grid-container {
   display: none;
-  width: 86vw;
-  max-width: 380px;
+  width: 80vw; /* Сжали ширину, чтобы уменьшить высоту всей конструкции */
+  max-width: 340px;
   grid-template-columns: repeat(5, 1fr);
   gap: 4px;
-  margin: 0 auto 6px auto; /* Последняя цифра 6px задает железный зазор снизу */
+  margin: 0 auto;
 }
 .grid-card {
   width: 100%;
@@ -135,17 +135,17 @@ html, body {
   animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-/* Кнопка ПЕРЕМЕШАТЬ — Убрали лишние отступы, теперь она прижмется вверх */
+/* Кнопка ПЕРЕМЕШАТЬ — Безопасный отступ */
 .btn-shuffle {
   display: none;
-  width: 55vw;
-  max-width: 260px;
-  min-width: 180px;
+  width: 52vw;
+  max-width: 240px;
+  min-width: 170px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: 0; 
+  margin-top: 8px; 
 }
 .btn-shuffle:active {
   transform: scale(0.93);
@@ -187,4 +187,115 @@ let startY = 0;
 let isDragging = false;
 
 function goTo(index) {
-  if (index
+  if (index < 0) index = 0;
+  if (index >= total) index = total - 1;
+  current = index;
+  carousel.style.transform = "translateX(-" + (current * 33.333) + "%)";
+}
+
+carousel.addEventListener('touchstart', function(e) {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+  isDragging = true;
+});
+
+carousel.addEventListener('touchend', function(e) {
+  if (!isDragging) return;
+  isDragging = false;
+  var diffX = startX - e.changedTouches[0].clientX;
+  var diffY = startY - e.changedTouches[0].clientY;
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
+  }
+});
+
+carousel.addEventListener('mousedown', function(e) {
+  startX = e.clientX;
+  startY = e.clientY;
+  isDragging = true;
+});
+
+carousel.addEventListener('mouseup', function(e) {
+  if (!isDragging) return;
+  isDragging = false;
+  var diffX = startX - e.clientX;
+  var diffY = startY - e.clientY;
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) goTo(current + 1);
+    else goTo(current - 1);
+  }
+});
+
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight') {
+    goTo(current + 1);
+  } else if (e.key === 'ArrowLeft') {
+    goTo(current - 1);
+  }
+});
+
+const btnStart = document.getElementById('btnStart');
+const mainDeck = document.getElementById('mainDeck');
+const gridContainer = document.getElementById('gridContainer');
+const btnShuffle = document.getElementById('btnShuffle');
+const soundStart = document.getElementById('soundStart');
+const soundShuffle = document.getElementById('soundShuffle');
+const gameContent = document.getElementById('gameContent');
+
+btnStart.addEventListener('click', function() {
+  soundStart.currentTime = 0;
+  soundStart.play();
+
+  mainDeck.style.opacity = '0';
+  mainDeck.style.transform = 'scale(0.8)';
+  btnStart.style.opacity = '0';
+  
+  setTimeout(function() {
+    mainDeck.style.display = 'none';
+    btnStart.style.display = 'none';
+    
+    // Сделали верхний отступ меньше, чтобы выиграть место на маленьких экранах
+    gameContent.style.paddingTop = '2vh';
+    
+    gridContainer.style.display = 'grid';
+    btnShuffle.style.display = 'block';
+    generateCards();
+  }, 350);
+});
+
+btnShuffle.addEventListener('click', function() {
+  soundShuffle.currentTime = 0;
+  soundShuffle.play();
+  
+  const cards = gridContainer.querySelectorAll('.grid-card');
+  cards.forEach(function(card) {
+    card.classList.remove('animate');
+    void card.offsetWidth;
+  });
+  
+  cards.forEach(function(card, index) {
+    setTimeout(function() {
+      card.classList.add('animate');
+    }, index * 12);
+  });
+});
+
+function generateCards() {
+  gridContainer.innerHTML = '';
+  for (var i = 0; i < 25; i++) {
+    (function(index) {
+      var card = document.createElement('div');
+      card.classList.add('grid-card');
+      gridContainer.appendChild(card);
+      setTimeout(function() {
+        card.classList.add('animate');
+      }, index * 15);
+    })(i);
+  }
+}
+
+goTo(0);
+</script>
+</body>
+</html>
