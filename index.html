@@ -72,11 +72,11 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Переключаем на верхнее выравнивание */
-  padding-top: 10vh;            /* Мягко опускаем всю собранную конструкцию на уровень глаз */
+  justify-content: flex-start;
+  padding-top: 10vh;            /* Железобетонная фиксация высоты колоды */
 }
 
-/* Колода карт — Идеальный формат 9:16 */
+/* Колода карт — ЗАФИКСИРОВАНО НАМЕРТВО, НЕ ТРОГАТЬ */
 .deck {
   position: relative;
   width: 66vw;
@@ -102,7 +102,7 @@ html, body {
 .deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
 .deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
 
-/* Кнопка — сидит рядышком под колодой */
+/* Кнопка — ИСПРАВЛЕНО: приподняли на 1 см ближе к зафиксированной колоде */
 .btn-start {
   width: 60vw;
   max-width: 280px;
@@ -111,7 +111,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
   touch-action: manipulation;
-  margin-top: 24px;
+  margin-top: -10px; /* Отрицательный отступ красиво приподнимает кнопку повыше */
 }
 
 .btn-start:active {
