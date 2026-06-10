@@ -1,35 +1,138 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Фантом Карты</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Fantom Card</title>
+<style>
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="👉 НАЖИМАЙ И ИГРАЙ! 🚀">
-    <meta property="og:description" content="Космические фаны для всей семьи. Открывай карты, выполняй задания Инопов!">
-    <meta property="og:image" content="cover.png">
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    <link rel="stylesheet" href="style.css">
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Обёртка карусели */
+.carousel {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+/* Каждый экран */
+.screen {
+  width: 33.333%;
+  height: 100%;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Экран 1 — Обложка */
+#screen-cover {
+  background-image: url('cover.png');
+}
+
+/* Экран 2 — Правила */
+#screen-rules {
+  background-image: url('rules.png');
+}
+
+/* Экран 3 — Игровое поле */
+#screen-game {
+  background-image: url('main_bg.png');
+}
+
+</style>
 </head>
-<body oncontextmenu="return false;" ondragstart="return false;">
+<body>
 
-    <div class="slider-container" id="slider">
-        
-        <section class="screen" id="screen-cover" style="background-image: url('cover.png');">
-            <div class="hint-swipe">Листай влево ➔</div>
-        </section>
+<div class="carousel" id="carousel">
+  <div class="screen" id="screen-cover"></div>
+  <div class="screen" id="screen-rules"></div>
+  <div class="screen" id="screen-game"></div>
+</div>
 
-        <section class="screen" id="screen-rules" style="background-image: url('rules.png');">
-            <div class="hint-swipe">Листай влево ➔</div>
-        </section>
+<script>
 
-        <section class="screen" id="screen-game" style="background-image: url('main_bg.png');">
-            </section>
+const carousel = document.getElementById('carousel');
 
-    </div>
+// Текущий экран: 0 = обложка, 1 = правила, 2 = игра
+let current = 0;
+const total = 3;
 
-    <script src="script.js"></script>
+// Стартовые координаты свайпа
+let startX = 0;
+let startY = 0;
+let isDragging = false;
+
+// Показать нужный экран
+function goTo(index) {
+  if (index < 0) index = 0;
+  if (index >= total) index = total - 1;
+  current = index;
+  carousel.style.transform = `translateX(-${current * 33.333}%)`;
+}
+
+// TOUCH события (мобилка)
+carousel.addEventListener('touchstart', (e) => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+  isDragging = true;
+}, { passive: true });
+
+carousel.addEventListener('touchend', (e) => {
+  if (!isDragging) return;
+  isDragging = false;
+
+  const diffX = startX - e.changedTouches[0].clientX;
+  const diffY = startY - e.changedTouches[0].clientY;
+
+  // Свайп горизонтальный (не вертикальный)
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) {
+      goTo(current + 1); // свайп влево — следующий экран
+    } else {
+      goTo(current - 1); // свайп вправо — предыдущий экран
+    }
+  }
+}, { passive: true });
+
+// MOUSE события (десктоп для теста)
+carousel.addEventListener('mousedown', (e) => {
+  startX = e.clientX;
+  startY = e.clientY;
+  isDragging = true;
+});
+
+carousel.addEventListener('mouseup', (e) => {
+  if (!isDragging) return;
+  isDragging = false;
+
+  const diffX = startX - e.clientX;
+  const diffY = startY - e.clientY;
+
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+    if (diffX > 0) {
+      goTo(current + 1);
+    } else {
+      goTo(current - 1);
+    }
+  }
+});
+
+// Стартуем с первого экрана
+goTo(0);
+
+</script>
 </body>
 </html>
