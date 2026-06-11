@@ -218,7 +218,7 @@ html, body {
   }
 }
 
-/* ── МОДАЛЬНОЕ ОКНО С 3D ВРАЩЕНИЕМ ── */
+/* ── МОДАЛЬНОЕ ОКНО С 3D ── */
 .overlay {
   position: absolute;
   top: 0; left: 0;
@@ -239,48 +239,60 @@ html, body {
   pointer-events: auto;
 }
 
-/* 3D-контейнер для карты */
+/* 3D-контейнер */
 .big-card-wrapper {
   width: 70%;
   max-width: 320px;
   aspect-ratio: 9 / 16;
   position: relative;
   transform-style: preserve-3d;
-  /* начальное состояние: далеко внизу, маленькая, повёрнута рубашкой */
+  /* начальное состояние */
   transform: translateY(60vh) scale(0.3) rotateY(0deg);
-  transition: none;
 }
 
-/* когда overlay активен — карта вылетает и крутится */
-.overlay.active .big-card-wrapper {
-  animation: cardFlyAndSpin 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* когда overlay закрывается — возврат без анимации */
-.big-card-wrapper.reset {
-  transform: translateY(60vh) scale(0.3) rotateY(0deg);
-  transition: none;
-}
-
-@keyframes cardFlyAndSpin {
+/* ФАЗА 1: вылет снизу — рубашкой вверх */
+@keyframes cardFlyIn {
   0% {
     transform: translateY(60vh) scale(0.3) rotateY(0deg);
   }
-  40% {
-    transform: translateY(-5vh) scale(1.05) rotateY(540deg);
+  60% {
+    transform: translateY(-3vh) scale(1.03) rotateY(0deg);
   }
-  55% {
-    transform: translateY(2vh) scale(0.97) rotateY(700deg);
-  }
-  70% {
-    transform: translateY(-1vh) scale(1.01) rotateY(710deg);
+  80% {
+    transform: translateY(1vh) scale(0.98) rotateY(0deg);
   }
   100% {
-    transform: translateY(0) scale(1) rotateY(720deg);
+    transform: translateY(0) scale(1) rotateY(0deg);
   }
 }
 
-/* лицо карты (передняя сторона) */
+/* ФАЗА 2: переворот — рубашка → лицо */
+@keyframes cardFlipReveal {
+  0% {
+    transform: translateY(0) scale(1) rotateY(0deg);
+  }
+  50% {
+    transform: translateY(-2vh) scale(1.05) rotateY(90deg);
+  }
+  100% {
+    transform: translateY(0) scale(1) rotateY(180deg);
+  }
+}
+
+/* Классы для JS-управления фазами */
+.big-card-wrapper.phase-fly {
+  animation: cardFlyIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.big-card-wrapper.phase-flip {
+  animation: cardFlipReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.big-card-wrapper.reset {
+  transform: translateY(60vh) scale(0.3) rotateY(0deg);
+  animation: none;
+}
+
+/* лицо карты — ЗАДНЯЯ сторона (видно после rotateY 180°) */
 .big-card-front {
   position: absolute;
   width: 100%;
@@ -291,10 +303,10 @@ html, body {
   background-repeat: no-repeat;
   box-shadow: 0 15px 40px rgba(0,0,0,0.6);
   backface-visibility: hidden;
-  /* лицо видно когда rotateY = 0 (или 360, 720...) */
+  transform: rotateY(180deg);
 }
 
-/* рубашка карты (задняя сторона) */
+/* рубашка — ПЕРЕДНЯЯ сторона (видно изначально) */
 .big-card-back {
   position: absolute;
   width: 100%;
@@ -306,7 +318,7 @@ html, body {
   background-repeat: no-repeat;
   box-shadow: 0 15px 40px rgba(0,0,0,0.6);
   backface-visibility: hidden;
-  transform: rotateY(180deg);
+  transform: rotateY(0deg);
 }
 
 .btn-ready {
@@ -317,10 +329,12 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
   opacity: 0;
-  transition: opacity 0.3s ease 0.8s;
+  pointer-events: none;
 }
-.overlay.active .btn-ready {
+.btn-ready.show {
   opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
 }
 .btn-ready:active { transform: scale(0.93); }
 </style>
@@ -436,6 +450,7 @@ const startHint = document.getElementById('startHint');
 
 let cardsArray = Array.from({length: 25}, (_, i) => i + 1);
 let currentOpenedCardElement = null;
+let flipTimeout = null;
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -510,16 +525,36 @@ function generateCards() {
         soundCardOpen.currentTime = 0;
         soundCardOpen.play();
         
-        // Сброс анимации перед новым открытием
+        // Полный сброс
+        bigCardWrapper.classList.remove('phase-fly', 'phase-flip');
         bigCardWrapper.classList.add('reset');
         void bigCardWrapper.offsetWidth; // force reflow
         bigCardWrapper.classList.remove('reset');
         
+        btnReady.classList.remove('show');
+        
         // Устанавливаем лицо карты
         bigCardFront.style.backgroundImage = "url('card_" + fantomId + ".png')";
         
-        // Запускаем overlay → анимация вылета + 3D spin
+        // Показываем overlay
         cardOverlay.classList.add('active');
+        
+        // ФАЗА 1: вылет рубашкой вверх
+        bigCardWrapper.classList.add('phase-fly');
+        
+        // Очищаем предыдущий таймер если был
+        if (flipTimeout) clearTimeout(flipTimeout);
+        
+        // ФАЗА 2: через 1 секунду — переворот
+        flipTimeout = setTimeout(function() {
+          bigCardWrapper.classList.remove('phase-fly');
+          bigCardWrapper.classList.add('phase-flip');
+          
+          // Кнопка "Готово" появляется после переворота
+          setTimeout(function() {
+            btnReady.classList.add('show');
+          }, 400);
+        }, 1000);
       });
 
       gridContainer.appendChild(card);
@@ -536,7 +571,14 @@ btnReady.addEventListener('click', function() {
   soundCardClose.currentTime = 0;
   soundCardClose.play();
   
+  // Очищаем таймер на случай если нажали быстро
+  if (flipTimeout) {
+    clearTimeout(flipTimeout);
+    flipTimeout = null;
+  }
+  
   cardOverlay.classList.remove('active');
+  btnReady.classList.remove('show');
   
   const fantomId = currentOpenedCardElement.dataset.fantomId;
   currentOpenedCardElement.style.backgroundImage = "url('card_" + fantomId + ".png')";
