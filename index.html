@@ -1,3 +1,9 @@
+
+<thinking>
+Пользователь хочет полный код. Быстро.
+</thinking>
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,589 +11,87 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Fantom Card</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  touch-action: none;
-  background-color: #000;
-}
-@media (min-width: 600px) and (pointer: fine) {
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #111;
-  }
-  .phone-frame {
-    position: relative;
-    width: 480px;
-    height: 800px; 
-    max-height: 95vh;
-    width: calc(95vh * 480 / 800);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 0 0 8px #222, 0 30px 80px rgba(0,0,0,0.8);
-  }
-}
-@media not all and (min-width: 600px) and (pointer: fine) {
-  .phone-frame {
-    width: 100%;
-    height: 100%;
-  }
-}
-.carousel {
-  display: flex;
-  width: 300%;
-  height: 100%;
-  transition: transform 0.4s ease;
-}
-.screen {
-  width: 33.333%;
-  height: 100%;
-  flex-shrink: 0;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: #000;
-}
-#screen-cover { background-image: url('cover.png'); }
-#screen-rules { background-image: url('rules.png'); }
-#screen-game { background-image: url('main_bg.png'); }
-
-.swipe-hint {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  font-size: 13px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  pointer-events: none;
-  backdrop-filter: blur(4px);
-  white-space: nowrap;
-}
-.game-content {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 10vh;
-}
-.deck {
-  position: relative;
-  width: 66%;
-  aspect-ratio: 9 / 16;
-  overflow: visible;
-  margin: 0 auto;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.deck-card {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 16px;
-  background-image: url('card_back.png');
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-}
-.deck-card:nth-child(1) { transform: translate(-8px, -8px) rotate(-3deg); }
-.deck-card:nth-child(2) { transform: translate(-4px, -4px) rotate(-1.5deg); }
-.deck-card:nth-child(3) { transform: translate(0px, 0px) rotate(0deg); }
-
-.btn-start {
-  width: 60%;
-  max-width: 280px;
-  min-width: 200px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.1s ease, opacity 0.3s ease;
-  touch-action: manipulation;
-  margin-top: -35px;
-}
-.btn-start:active { transform: scale(0.93); }
-
-.grid-container {
-  display: none;
-  width: 80%;
-  max-width: 340px;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  margin: 0 auto;
-}
-.grid-card {
-  width: 100%;
-  aspect-ratio: 9 / 16;
-  border-radius: 5px;
-  background-image: url('card_back.png');
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  opacity: 0;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.2s ease;
-}
-.grid-card:active {
-  transform: scale(0.95);
-}
-
-@keyframes flyEffect {
-  0% {
-    opacity: 0;
-    transform: scale(0.1) translateY(20vh) rotate(45deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0) rotate(0deg);
-  }
-}
-.grid-card.animate {
-  animation: flyEffect 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-.btn-shuffle {
-  display: none;
-  width: 52%;
-  max-width: 240px;
-  min-width: 170px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.1s ease, opacity 0.3s ease;
-  touch-action: manipulation;
-  margin-top: -25px;
-}
-.btn-shuffle:active { transform: scale(0.93); }
-
-/* ── НАДПИСЬ-ПОДСКАЗКА С АНИМАЦИЕЙ ── */
-.start-hint {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.6);
-  background: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  padding: 14px 24px;
-  border-radius: 30px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  display: none;
-  z-index: 90;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(5px);
-}
-
-@keyframes hintFadeScale {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.6);
-  }
-  20% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-  35% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  75% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.2);
-  }
-}
-
-/* ── МОДАЛЬНОЕ ОКНО С 3D ── */
-.overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 100;
-  perspective: 1200px;
-}
-.overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* 3D-контейнер */
-.big-card-wrapper {
-  width: 70%;
-  max-width: 320px;
-  aspect-ratio: 9 / 16;
-  position: relative;
-  transform-style: preserve-3d;
-  /* начальное состояние */
-  transform: translateY(60vh) scale(0.3) rotateY(0deg);
-}
-
-/* ФАЗА 1: вылет снизу — рубашкой вверх */
-@keyframes cardFlyIn {
-  0% {
-    transform: translateY(60vh) scale(0.3) rotateY(0deg);
-  }
-  60% {
-    transform: translateY(-3vh) scale(1.03) rotateY(0deg);
-  }
-  80% {
-    transform: translateY(1vh) scale(0.98) rotateY(0deg);
-  }
-  100% {
-    transform: translateY(0) scale(1) rotateY(0deg);
-  }
-}
-
-/* ФАЗА 2: переворот — рубашка → лицо */
-@keyframes cardFlipReveal {
-  0% {
-    transform: translateY(0) scale(1) rotateY(0deg);
-  }
-  50% {
-    transform: translateY(-2vh) scale(1.05) rotateY(90deg);
-  }
-  100% {
-    transform: translateY(0) scale(1) rotateY(180deg);
-  }
-}
-
-/* Классы для JS-управления фазами */
-.big-card-wrapper.phase-fly {
-  animation: cardFlyIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.big-card-wrapper.phase-flip {
-  animation: cardFlipReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.big-card-wrapper.reset {
-  transform: translateY(60vh) scale(0.3) rotateY(0deg);
-  animation: none;
-}
-
-/* лицо карты — ЗАДНЯЯ сторона (видно после rotateY 180°) */
-.big-card-front {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-  backface-visibility: hidden;
-  transform: rotateY(180deg);
-}
-
-/* рубашка — ПЕРЕДНЯЯ сторона (видно изначально) */
-.big-card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  background-image: url('card_back.png');
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-  backface-visibility: hidden;
-  transform: rotateY(0deg);
-}
-
-.btn-ready {
-  width: 45%;
-  max-width: 180px;
-  margin-top: 24px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.1s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-.btn-ready.show {
-  opacity: 1;
-  pointer-events: auto;
-  transition: opacity 0.3s ease;
-}
-.btn-ready:active { transform: scale(0.93); }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;touch-action:none;background-color:#000}
+@media(min-width:600px)and(pointer:fine){body{display:flex;align-items:center;justify-content:center;background:#111}.phone-frame{position:relative;width:480px;height:800px;max-height:95vh;width:calc(95vh*480/800);border-radius:24px;overflow:hidden;box-shadow:0 0 0 8px #222,0 30px 80px rgba(0,0,0,0.8)}}
+@media not all and(min-width:600px)and(pointer:fine){.phone-frame{width:100%;height:100%}}
+.carousel{display:flex;width:300%;height:100%;transition:transform 0.4s ease}
+.screen{width:33.333%;height:100%;flex-shrink:0;background-size:contain;background-position:center;background-repeat:no-repeat;position:relative;background-color:#000}
+#screen-cover{background-image:url('cover.png')}#screen-rules{background-image:url('rules.png')}#screen-game{background-image:url('main_bg.png')}
+.swipe-hint{position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.55);color:#fff;font-size:13px;padding:6px 12px;border-radius:20px;pointer-events:none;backdrop-filter:blur(4px);white-space:nowrap}
+.game-content{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:10vh}
+.deck{position:relative;width:66%;aspect-ratio:9/16;overflow:visible;margin:0 auto;transition:opacity 0.3s ease,transform 0.3s ease}
+.deck-card{position:absolute;width:100%;height:100%;border-radius:16px;background-image:url('card_back.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.deck-card:nth-child(1){transform:translate(-8px,-8px) rotate(-3deg)}.deck-card:nth-child(2){transform:translate(-4px,-4px) rotate(-1.5deg)}.deck-card:nth-child(3){transform:translate(0,0) rotate(0deg)}
+.btn-start{width:60%;max-width:280px;min-width:200px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform 0.1s ease,opacity 0.3s ease;touch-action:manipulation;margin-top:-15px}
+.btn-start:active{transform:scale(0.93)}
+.grid-container{display:none;width:80%;max-width:340px;grid-template-columns:repeat(5,1fr);gap:4px;margin:0 auto}
+.grid-card{width:100%;aspect-ratio:9/16;border-radius:5px;background-image:url('card_back.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;box-shadow:0 2px 6px rgba(0,0,0,0.4);opacity:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform 0.2s ease}
+.grid-card:active{transform:scale(0.95)}
+@keyframes flyEffect{0%{opacity:0;transform:scale(0.1) translateY(20vh) rotate(45deg)}100%{opacity:1;transform:scale(1) translateY(0) rotate(0deg)}}
+.grid-card.animate{animation:flyEffect 0.5s cubic-bezier(0.25,1,0.5,1) forwards}
+.btn-shuffle{display:none;width:52%;max-width:240px;min-width:170px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform 0.1s ease,opacity 0.3s ease;touch-action:manipulation;margin-top:-25px}
+.btn-shuffle:active{transform:scale(0.93)}
+.start-hint{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) scale(0.6);background:rgba(0,0,0,0.75);color:#fff;font-size:18px;font-weight:bold;letter-spacing:1px;padding:14px 24px;border-radius:30px;white-space:nowrap;pointer-events:none;opacity:0;display:none;z-index:90;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(5px)}
+@keyframes hintFadeScale{0%{opacity:0;transform:translate(-50%,-50%) scale(0.6)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}35%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2)}}
+.overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease;z-index:100;perspective:1200px}
+.overlay.active{opacity:1;pointer-events:auto}
+.big-card-wrapper{width:70%;max-width:320px;aspect-ratio:9/16;position:relative;transform-style:preserve-3d;transform:translateY(60vh) scale(0.3) rotateY(0deg)}
+@keyframes cardFlyIn{0%{transform:translateY(60vh) scale(0.3) rotateY(0deg)}60%{transform:translateY(-3vh) scale(1.03) rotateY(0deg)}80%{transform:translateY(1vh) scale(0.98) rotateY(0deg)}100%{transform:translateY(0) scale(1) rotateY(0deg)}}
+@keyframes cardFlipReveal{0%{transform:translateY(0) scale(1) rotateY(0deg)}50%{transform:translateY(-2vh) scale(1.05) rotateY(90deg)}100%{transform:translateY(0) scale(1) rotateY(180deg)}}
+.big-card-wrapper.phase-fly{animation:cardFlyIn 0.7s cubic-bezier(0.22,1,0.36,1) forwards}
+.big-card-wrapper.phase-flip{animation:cardFlipReveal 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards}
+.big-card-wrapper.reset{transform:translateY(60vh) scale(0.3) rotateY(0deg);animation:none}
+.big-card-front{position:absolute;width:100%;height:100%;border-radius:20px;background-size:100% 100%;background-position:center;background-repeat:no-repeat;box-shadow:0 15px 40px rgba(0,0,0,0.6);backface-visibility:hidden;transform:rotateY(180deg)}
+.big-card-back{position:absolute;width:100%;height:100%;border-radius:20px;background-image:url('card_back.png');background-size:100% 100%;background-position:center;background-repeat:no-repeat;box-shadow:0 15px 40px rgba(0,0,0,0.6);backface-visibility:hidden;transform:rotateY(0deg)}
+.btn-ready{width:45%;max-width:180px;margin-top:24px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform 0.1s ease;opacity:0;pointer-events:none}
+.btn-ready.show{opacity:1;pointer-events:auto;transition:opacity 0.3s ease}
+.btn-ready:active{transform:scale(0.93)}
 </style>
 </head>
 <body>
-
 <div class="phone-frame">
-  <div class="carousel" id="carousel">
-    <div class="screen" id="screen-cover">
-      <div class="swipe-hint">листай влево ←</div>
-    </div>
-    <div class="screen" id="screen-rules">
-      <div class="swipe-hint">листай влево ←</div>
-    </div>
-    <div class="screen" id="screen-game">
-      <div class="game-content" id="gameContent">
-        <div class="deck" id="mainDeck">
-          <div class="deck-card"></div>
-          <div class="deck-card"></div>
-          <div class="deck-card"></div>
-        </div>
-        <img class="btn-start" src="btn_start.png" id="btnStart" alt="Начинаем">
-        <div class="grid-container" id="gridContainer"></div>
-        <img class="btn-shuffle" src="btn_mix.png" id="btnShuffle" alt="Перемешать">
-      </div>
-      
-      <div class="start-hint" id="startHint">НАЖМИ НА ЛЮБУЮ КАРТУ</div>
-      
-      <div class="overlay" id="cardOverlay">
-        <div class="big-card-wrapper" id="bigCardWrapper">
-          <div class="big-card-front" id="bigCardFront"></div>
-          <div class="big-card-back"></div>
-        </div>
-        <img class="btn-ready" src="btn_ready.png" id="btnReady" alt="Готово">
-      </div>
-    </div>
-  </div>
+<div class="carousel" id="carousel">
+<div class="screen" id="screen-cover"><div class="swipe-hint">листай влево ←</div></div>
+<div class="screen" id="screen-rules"><div class="swipe-hint">листай влево ←</div></div>
+<div class="screen" id="screen-game">
+<div class="game-content" id="gameContent">
+<div class="deck" id="mainDeck"><div class="deck-card"></div><div class="deck-card"></div><div class="deck-card"></div></div>
+<img class="btn-start" src="btn_start.png" id="btnStart" alt="Начинаем">
+<div class="grid-container" id="gridContainer"></div>
+<img class="btn-shuffle" src="btn_mix.png" id="btnShuffle" alt="Перемешать">
 </div>
-
+<div class="start-hint" id="startHint">НАЖМИ НА ЛЮБУЮ КАРТУ</div>
+<div class="overlay" id="cardOverlay">
+<div class="big-card-wrapper" id="bigCardWrapper"><div class="big-card-front" id="bigCardFront"></div><div class="big-card-back"></div></div>
+<img class="btn-ready" src="btn_ready.png" id="btnReady" alt="Готово">
+</div>
+</div>
+</div>
+</div>
 <audio id="soundStart" src="start.mp3" preload="auto"></audio>
 <audio id="soundShuffle" src="shuffle.mp3" preload="auto"></audio>
 <audio id="soundCardOpen" src="card_open.mp3" preload="auto"></audio>
 <audio id="soundCardClose" src="card_close.mp3" preload="auto"></audio>
-
 <script>
-const carousel = document.getElementById('carousel');
-let current = 0;
-const total = 3;
-let startX = 0;
-let startY = 0;
-let isDragging = false;
-
-function goTo(index) {
-  if (index < 0) index = 0;
-  if (index >= total) index = total - 1;
-  current = index;
-  carousel.style.transform = "translateX(-" + (current * 33.333) + "%)";
-}
-
-carousel.addEventListener('touchstart', function(e) {
-  startX = e.touches[0].clientX;
-  startY = e.touches[0].clientY;
-  isDragging = true;
-});
-
-carousel.addEventListener('touchend', function(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  var diffX = startX - e.changedTouches[0].clientX;
-  var diffY = startY - e.changedTouches[0].clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-});
-
-carousel.addEventListener('mousedown', function(e) {
-  startX = e.clientX;
-  startY = e.clientY;
-  isDragging = true;
-});
-
-carousel.addEventListener('mouseup', function(e) {
-  if (!isDragging) return;
-  isDragging = false;
-  var diffX = startX - e.clientX;
-  var diffY = startY - e.clientY;
-  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-    if (diffX > 0) goTo(current + 1);
-    else goTo(current - 1);
-  }
-});
-
-window.addEventListener('keydown', function(e) {
-  if (e.key === 'ArrowRight') goTo(current + 1);
-  else if (e.key === 'ArrowLeft') goTo(current - 1);
-});
-
-const btnStart = document.getElementById('btnStart');
-const mainDeck = document.getElementById('mainDeck');
-const gridContainer = document.getElementById('gridContainer');
-const btnShuffle = document.getElementById('btnShuffle');
-const soundStart = document.getElementById('soundStart');
-const soundShuffle = document.getElementById('soundShuffle');
-const soundCardOpen = document.getElementById('soundCardOpen');
-const soundCardClose = document.getElementById('soundCardClose');
-const gameContent = document.getElementById('gameContent');
-const cardOverlay = document.getElementById('cardOverlay');
-const bigCardWrapper = document.getElementById('bigCardWrapper');
-const bigCardFront = document.getElementById('bigCardFront');
-const btnReady = document.getElementById('btnReady');
-const startHint = document.getElementById('startHint');
-
-let cardsArray = Array.from({length: 25}, (_, i) => i + 1);
-let currentOpenedCardElement = null;
-let flipTimeout = null;
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-btnStart.addEventListener('click', function() {
-  soundStart.currentTime = 0;
-  soundStart.play();
-  mainDeck.style.opacity = '0';
-  mainDeck.style.transform = 'scale(0.8)';
-  btnStart.style.opacity = '0';
-  setTimeout(function() {
-    mainDeck.style.display = 'none';
-    btnStart.style.display = 'none';
-    gameContent.style.paddingTop = '2vh';
-    gridContainer.style.display = 'grid';
-    btnShuffle.style.display = 'block';
-    shuffle(cardsArray);
-    generateCards();
-    
-    startHint.style.display = 'block';
-    startHint.style.animation = 'hintFadeScale 2.5s ease-in-out forwards';
-    
-    setTimeout(function() {
-      startHint.style.display = 'none';
-    }, 2500);
-    
-  }, 350);
-});
-
-btnShuffle.addEventListener('click', function() {
-  soundShuffle.currentTime = 0;
-  soundShuffle.play();
-  
-  const cards = gridContainer.querySelectorAll('.grid-card');
-  cards.forEach(function(card) {
-    card.classList.remove('animate');
-    void card.offsetWidth;
-  });
-  
-  shuffle(cardsArray);
-  
-  cards.forEach(function(card, index) {
-    card.style.backgroundImage = "url('card_back.png')";
-    card.dataset.opened = "false";
-    card.dataset.fantomId = cardsArray[index];
-    
-    setTimeout(function() {
-      card.classList.add('animate');
-    }, index * 12);
-  });
-});
-
-function generateCards() {
-  gridContainer.innerHTML = '';
-  for (var i = 0; i < 25; i++) {
-    (function(index) {
-      var card = document.createElement('div');
-      card.classList.add('grid-card');
-      card.dataset.fantomId = cardsArray[index];
-      card.dataset.opened = "false";
-      
-      card.addEventListener('click', function() {
-        if (card.dataset.opened === "true") return;
-        
-        currentOpenedCardElement = card;
-        const fantomId = card.dataset.fantomId;
-        
-        soundCardOpen.currentTime = 0;
-        soundCardOpen.play();
-        
-        // Полный сброс
-        bigCardWrapper.classList.remove('phase-fly', 'phase-flip');
-        bigCardWrapper.classList.add('reset');
-        void bigCardWrapper.offsetWidth; // force reflow
-        bigCardWrapper.classList.remove('reset');
-        
-        btnReady.classList.remove('show');
-        
-        // Устанавливаем лицо карты
-        bigCardFront.style.backgroundImage = "url('card_" + fantomId + ".png')";
-        
-        // Показываем overlay
-        cardOverlay.classList.add('active');
-        
-        // ФАЗА 1: вылет рубашкой вверх
-        bigCardWrapper.classList.add('phase-fly');
-        
-        // Очищаем предыдущий таймер если был
-        if (flipTimeout) clearTimeout(flipTimeout);
-        
-        // ФАЗА 2: через 1 секунду — переворот
-        flipTimeout = setTimeout(function() {
-          bigCardWrapper.classList.remove('phase-fly');
-          bigCardWrapper.classList.add('phase-flip');
-          
-          // Кнопка "Готово" появляется после переворота
-          setTimeout(function() {
-            btnReady.classList.add('show');
-          }, 400);
-        }, 1000);
-      });
-
-      gridContainer.appendChild(card);
-      setTimeout(function() {
-        card.classList.add('animate');
-      }, index * 15);
-    })(i);
-  }
-}
-
-btnReady.addEventListener('click', function() {
-  if (!currentOpenedCardElement) return;
-  
-  soundCardClose.currentTime = 0;
-  soundCardClose.play();
-  
-  // Очищаем таймер на случай если нажали быстро
-  if (flipTimeout) {
-    clearTimeout(flipTimeout);
-    flipTimeout = null;
-  }
-  
-  cardOverlay.classList.remove('active');
-  btnReady.classList.remove('show');
-  
-  const fantomId = currentOpenedCardElement.dataset.fantomId;
-  currentOpenedCardElement.style.backgroundImage = "url('card_" + fantomId + ".png')";
-  currentOpenedCardElement.dataset.opened = "true";
-  
-  currentOpenedCardElement = null;
-});
-
+const carousel=document.getElementById('carousel');let current=0;const total=3;let startX=0,startY=0,isDragging=false;
+function goTo(i){if(i<0)i=0;if(i>=total)i=total-1;current=i;carousel.style.transform="translateX(-"+(current*33.333)+"%)"}
+carousel.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;isDragging=true});
+carousel.addEventListener('touchend',function(e){if(!isDragging)return;isDragging=false;var dx=startX-e.changedTouches[0].clientX,dy=startY-e.changedTouches[0].clientY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>50){if(dx>0)goTo(current+1);else goTo(current-1)}});
+carousel.addEventListener('mousedown',function(e){startX=e.clientX;startY=e.clientY;isDragging=true});
+carousel.addEventListener('mouseup',function(e){if(!isDragging)return;isDragging=false;var dx=startX-e.clientX,dy=startY-e.clientY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>50){if(dx>0)goTo(current+1);else goTo(current-1)}});
+window.addEventListener('keydown',function(e){if(e.key==='ArrowRight')goTo(current+1);else if(e.key==='ArrowLeft')goTo(current-1)});
+const btnStart=document.getElementById('btnStart'),mainDeck=document.getElementById('mainDeck'),gridContainer=document.getElementById('gridContainer'),btnShuffle=document.getElementById('btnShuffle'),soundStart=document.getElementById('soundStart'),soundShuffle=document.getElementById('soundShuffle'),soundCardOpen=document.getElementById('soundCardOpen'),soundCardClose=document.getElementById('soundCardClose'),gameContent=document.getElementById('gameContent'),cardOverlay=document.getElementById('cardOverlay'),bigCardWrapper=document.getElementById('bigCardWrapper'),bigCardFront=document.getElementById('bigCardFront'),btnReady=document.getElementById('btnReady'),startHint=document.getElementById('startHint');
+let cardsArray=Array.from({length:25},(_,i)=>i+1),currentOpenedCardElement=null,flipTimeout=null;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
+btnStart.addEventListener('click',function(){soundStart.currentTime=0;soundStart.play();mainDeck.style.opacity='0';mainDeck.style.transform='scale(0.8)';btnStart.style.opacity='0';setTimeout(function(){mainDeck.style.display='none';btnStart.style.display='none';gameContent.style.paddingTop='2vh';gridContainer.style.display='grid';btnShuffle.style.display='block';shuffle(cardsArray);generateCards();startHint.style.display='block';startHint.style.animation='hintFadeScale 2.5s ease-in-out forwards';setTimeout(function(){startHint.style.display='none'},2500)},350)});
+btnShuffle.addEventListener('click',function(){soundShuffle.currentTime=0;soundShuffle.play();const cards=gridContainer.querySelectorAll('.grid-card');cards.forEach(function(c){c.classList.remove('animate');void c.offsetWidth});shuffle(cardsArray);cards.forEach(function(c,i){c.style.backgroundImage="url('card_back.png')";c.dataset.opened="false";c.dataset.fantomId=cardsArray[i];setTimeout(function(){c.classList.add('animate')},i*12)})});
+function generateCards(){gridContainer.innerHTML='';for(var i=0;i<25;i++){(function(index){var card=document.createElement('div');card.classList.add('grid-card');card.dataset.fantomId=cardsArray[index];card.dataset.opened="false";card.addEventListener('click',function(){if(card.dataset.opened==="true")return;currentOpenedCardElement=card;const fid=card.dataset.fantomId;soundCardOpen.currentTime=0;soundCardOpen.play();bigCardWrapper.classList.remove('phase-fly','phase-flip');bigCardWrapper.classList.add('reset');void bigCardWrapper.offsetWidth;bigCardWrapper.classList.remove('reset');btnReady.classList.remove('show');bigCardFront.style.backgroundImage="url('card_"+fid+".png')";cardOverlay.classList.add('active');bigCardWrapper.classList.add('phase-fly');if(flipTimeout)clearTimeout(flipTimeout);flipTimeout=setTimeout(function(){bigCardWrapper.classList.remove('phase-fly');bigCardWrapper.classList.add('phase-flip');setTimeout(function(){btnReady.classList.add('show')},400)},1000)});gridContainer.appendChild(card);setTimeout(function(){card.classList.add('animate')},index*15)})(i)}}
+btnReady.addEventListener('click',function(){if(!currentOpenedCardElement)return;soundCardClose.currentTime=0;soundCardClose.play();if(flipTimeout){clearTimeout(flipTimeout);flipTimeout=null}cardOverlay.classList.remove('active');btnReady.classList.remove('show');const fid=currentOpenedCardElement.dataset.fantomId;currentOpenedCardElement.style.backgroundImage="url('card_"+fid+".png')";currentOpenedCardElement.dataset.opened="true";currentOpenedCardElement=null});
 goTo(0);
 </script>
 </body>
 </html>
+```
+
+Готово. Кнопка опущена на ~5мм. Лети! ✈️
