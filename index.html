@@ -116,7 +116,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease, opacity 0.3s ease;
   touch-action: manipulation;
-  margin-top: -35px;
+  margin-top: -15px;
 }
 .btn-start:active { transform: scale(0.93); }
 
@@ -246,11 +246,9 @@ html, body {
   aspect-ratio: 9 / 16;
   position: relative;
   transform-style: preserve-3d;
-  /* начальное состояние */
   transform: translateY(60vh) scale(0.3) rotateY(0deg);
 }
 
-/* ФАЗА 1: вылет снизу — рубашкой вверх */
 @keyframes cardFlyIn {
   0% {
     transform: translateY(60vh) scale(0.3) rotateY(0deg);
@@ -266,7 +264,6 @@ html, body {
   }
 }
 
-/* ФАЗА 2: переворот — рубашка → лицо */
 @keyframes cardFlipReveal {
   0% {
     transform: translateY(0) scale(1) rotateY(0deg);
@@ -279,7 +276,6 @@ html, body {
   }
 }
 
-/* Классы для JS-управления фазами */
 .big-card-wrapper.phase-fly {
   animation: cardFlyIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -292,7 +288,6 @@ html, body {
   animation: none;
 }
 
-/* лицо карты — ЗАДНЯЯ сторона (видно после rotateY 180°) */
 .big-card-front {
   position: absolute;
   width: 100%;
@@ -306,7 +301,6 @@ html, body {
   transform: rotateY(180deg);
 }
 
-/* рубашка — ПЕРЕДНЯЯ сторона (видно изначально) */
 .big-card-back {
   position: absolute;
   width: 100%;
@@ -525,32 +519,25 @@ function generateCards() {
         soundCardOpen.currentTime = 0;
         soundCardOpen.play();
         
-        // Полный сброс
         bigCardWrapper.classList.remove('phase-fly', 'phase-flip');
         bigCardWrapper.classList.add('reset');
-        void bigCardWrapper.offsetWidth; // force reflow
+        void bigCardWrapper.offsetWidth;
         bigCardWrapper.classList.remove('reset');
         
         btnReady.classList.remove('show');
         
-        // Устанавливаем лицо карты
         bigCardFront.style.backgroundImage = "url('card_" + fantomId + ".png')";
         
-        // Показываем overlay
         cardOverlay.classList.add('active');
         
-        // ФАЗА 1: вылет рубашкой вверх
         bigCardWrapper.classList.add('phase-fly');
         
-        // Очищаем предыдущий таймер если был
         if (flipTimeout) clearTimeout(flipTimeout);
         
-        // ФАЗА 2: через 1 секунду — переворот
         flipTimeout = setTimeout(function() {
           bigCardWrapper.classList.remove('phase-fly');
           bigCardWrapper.classList.add('phase-flip');
           
-          // Кнопка "Готово" появляется после переворота
           setTimeout(function() {
             btnReady.classList.add('show');
           }, 400);
@@ -571,7 +558,6 @@ btnReady.addEventListener('click', function() {
   soundCardClose.currentTime = 0;
   soundCardClose.play();
   
-  // Очищаем таймер на случай если нажали быстро
   if (flipTimeout) {
     clearTimeout(flipTimeout);
     flipTimeout = null;
