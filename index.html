@@ -59,7 +59,16 @@ html, body {
 }
 #screen-cover { background-image: url('cover.png'); }
 #screen-rules { background-image: url('rules.png'); }
-#screen-game { background-image: url('main_bg.png'); }
+
+/* ── ВИДЕО-ФОН ── */
+.bg-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
 
 .swipe-hint {
   position: absolute;
@@ -73,6 +82,7 @@ html, body {
   pointer-events: none;
   backdrop-filter: blur(4px);
   white-space: nowrap;
+  z-index: 1;
 }
 .game-content {
   position: absolute;
@@ -84,6 +94,7 @@ html, body {
   align-items: center;
   justify-content: flex-start;
   padding-top: 10vh;
+  z-index: 1;
 }
 .deck {
   position: relative;
@@ -344,6 +355,10 @@ html, body {
       <div class="swipe-hint">листай влево ←</div>
     </div>
     <div class="screen" id="screen-game">
+
+      <!-- ВИДЕО ФОН -->
+      <video class="bg-video" src="main_bg.mp4" autoplay loop muted playsinline></video>
+
       <div class="game-content" id="gameContent">
         <div class="deck" id="mainDeck">
           <div class="deck-card"></div>
